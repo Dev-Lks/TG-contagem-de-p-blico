@@ -1,14 +1,8 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "public",
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
-    { "source": "/", "destination": "/public/index.html" },
-    { "source": "/app.js", "destination": "/public/app.js" },
-    { "source": "/styles.css", "destination": "/public/styles.css" },
-    { "source": "/sw.js", "destination": "/public/sw.js" },
-    { "source": "/manifest.webmanifest", "destination": "/public/manifest.webmanifest" },
-    { "source": "/icon.svg", "destination": "/public/icon.svg" }
-  ],
   "headers": [
     {
       "source": "/sw.js",
