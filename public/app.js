@@ -188,12 +188,22 @@ function render() {
   const eventTotals = totals();
   $('#exec-in-sub').textContent = `${eventTotals.entries.toLocaleString('pt-BR')} pessoas`;
   $('#exec-out-sub').textContent = `${eventTotals.exits.toLocaleString('pt-BR')} pessoas`;
-  const operatorSelect = $('#operator');
-  const operatorCurrent = operatorSelect.value || state.profile?.operator || '';
-  operatorSelect.innerHTML = `<option value="">Selecione seu nome</option>${state.roster.map((person) => `<option value="${escapeHtml(person.name)}"${person.name === operatorCurrent ? ' selected' : ''}>${escapeHtml(person.name)} — ${person.role}</option>`).join('')}`;
-  const gateSelect = $('#gate');
-  const current = gateSelect.value || state.profile?.gate;
-  gateSelect.innerHTML = state.config.gates.map((g) => `<option${g === current ? ' selected' : ''}>${escapeHtml(g)}</option>`).join('');
+
+  const rosterKey = state.roster.map((p) => p.name).join(',');
+  if (state._lastRosterKey !== rosterKey) {
+    state._lastRosterKey = rosterKey;
+    const operatorSelect = $('#operator');
+    const operatorCurrent = operatorSelect.value || state.profile?.operator || '';
+    operatorSelect.innerHTML = `<option value="">Selecione seu nome</option>${state.roster.map((person) => `<option value="${escapeHtml(person.name)}"${person.name === operatorCurrent ? ' selected' : ''}>${escapeHtml(person.name)} — ${person.role}</option>`).join('')}`;
+  }
+
+  const gatesKey = state.config.gates.join(',');
+  if (state._lastGatesKey !== gatesKey) {
+    state._lastGatesKey = gatesKey;
+    const gateSelect = $('#gate');
+    const current = gateSelect.value || state.profile?.gate;
+    gateSelect.innerHTML = state.config.gates.map((g) => `<option${g === current ? ' selected' : ''}>${escapeHtml(g)}</option>`).join('');
+  }
   const active = Boolean(state.profile?.active);
   $('#setup-card').classList.toggle('hidden', active);
   $('#counter-card').classList.toggle('hidden', !active);
@@ -422,8 +432,8 @@ function closeSession(message) {
   queue({ ...actionBase('session_end') });
   toast(message);
 }
-$('#change-post').addEventListener('click', () => closeSession('Posto liberado para nova identificação.'));
-$('#end-session').addEventListener('click', () => closeSession('Turno encerrado e salvo.'));
+$('#change-post').addEventListener('click', () => { if (confirm('Deseja trocar de posto?')) closeSession('Posto liberado para nova identificação.'); });
+$('#end-session').addEventListener('click', () => { if (confirm('Deseja encerrar seu turno?')) closeSession('Turno encerrado e salvo.'); });
 
 $$('.tab').forEach((tab) => tab.addEventListener('click', () => {
   $$('.tab').forEach((t) => t.classList.toggle('active', t === tab));
