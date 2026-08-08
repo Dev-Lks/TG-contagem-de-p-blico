@@ -34,7 +34,14 @@ create table if not exists public.counter_roster (
 create index if not exists counter_roster_event_idx
   on public.counter_roster (event_id, active, role, name);
 
+create table if not exists public.counter_settings (
+  event_id text primary key,
+  gates jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
 -- O navegador nunca acessa esta tabela diretamente. Somente as funções da
 -- Vercel usam a service role; portanto, não criamos políticas públicas.
 alter table public.counter_actions enable row level security;
 alter table public.counter_roster enable row level security;
+alter table public.counter_settings enable row level security;

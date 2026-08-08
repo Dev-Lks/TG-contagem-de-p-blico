@@ -7,7 +7,7 @@
   <meta name="description" content="Contagem confiável de entradas e saídas por portão.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=5">
+  <link rel="stylesheet" href="/styles.css?v=6">
   <title>Contador de Público</title>
 </head>
 <body>
@@ -35,27 +35,15 @@
         <label>Seu nome
           <select id="operator"><option value="">Carregando equipe…</option></select>
         </label>
-        <button id="show-add-member" class="text-button add-member-trigger" type="button">+ Adicionar pessoa à lista</button>
-        <div id="add-member-form" class="add-member hidden">
-          <label>Nome da pessoa<input id="new-member" maxlength="80" placeholder="Ex.: Atdr 000 NOME"></label>
-          <label>Função<select id="new-member-role"><option>Atirador</option><option>Monitor</option></select></label>
-          <button id="save-member" class="secondary full" type="button">Adicionar à equipe</button>
-        </div>
         <label>Portão
           <select id="gate"></select>
-        </label>
-        <label>Movimento
-          <select id="flow">
-            <option value="in">Entrada</option>
-            <option value="out">Saída</option>
-          </select>
         </label>
         <button id="start-session" class="primary full">Iniciar contagem</button>
       </div>
 
       <div id="counter-card" class="counter-wrap hidden">
         <div class="assignment">
-          <div><span id="assignment-flow" class="flow-badge">ENTRADA</span><strong id="assignment-gate">Portão 1</strong></div>
+          <div><span id="assignment-flow" class="flow-badge">ENTRADA E SAÍDA</span><strong id="assignment-gate">Portão 1</strong></div>
           <button id="change-post" class="text-button">Trocar posto</button>
         </div>
         <div class="total-card">
@@ -63,13 +51,13 @@
           <strong id="device-total">0</strong>
           <small id="operator-name"></small>
         </div>
-        <button id="add-one" class="count-button" aria-label="Adicionar uma pessoa">
-          <span>+1</span>
-          <small>PESSOA</small>
-        </button>
+        <div class="count-direction-buttons">
+          <button id="add-one-in" class="count-button in" aria-label="Registrar uma entrada"><span>+1</span><small>ENTRADA</small></button>
+          <button id="add-one-out" class="count-button out" aria-label="Registrar uma saída"><span>+1</span><small>SAÍDA</small></button>
+        </div>
         <div class="quick-actions">
-          <button data-add="5">+5</button>
-          <button data-add="10">+10</button>
+          <button data-add="5" data-flow="in">+5 entrada</button>
+          <button data-add="5" data-flow="out">+5 saída</button>
           <button id="undo" class="undo" disabled>↶ Desfazer</button>
         </div>
         <p id="last-action" class="last-action">Nenhuma marcação nesta sessão.</p>
@@ -80,7 +68,6 @@
     <section id="dashboard-view" class="view">
       <div class="dashboard-toolbar">
         <span id="mode-label" class="mode-label">EVENTO REAL</span>
-        <button id="demo-toggle" class="secondary" type="button">Ver simulação</button>
       </div>
       <div class="hero-total">
         <span>PÚBLICO PRESENTE</span>
@@ -138,8 +125,8 @@
       <div class="card instructions">
         <h2>Como contar</h2>
         <ol>
-          <li>Escolha seu nome, portão e se está contando entrada ou saída.</li>
-          <li>Toque em <b>+1</b> para cada pessoa. Use +5 ou +10 somente quando tiver certeza do grupo.</li>
+          <li>Escolha seu nome e o portão em que vai ficar.</li>
+          <li>Use <b>+1 ENTRADA</b> ou <b>+1 SAÍDA</b> conforme o movimento. Use +5 somente quando tiver certeza do grupo.</li>
           <li>Se marcar errado, toque imediatamente em <b>Desfazer</b>.</li>
           <li>Não mude de portão no meio do turno. Use “Trocar posto” quando houver rendição.</li>
           <li>Se a internet cair, continue contando: os registros ficam no celular e sincronizam depois.</li>
@@ -150,6 +137,6 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app.js?v=5"></script>
+  <script type="module" src="/app.js?v=6"></script>
 </body>
 </html>

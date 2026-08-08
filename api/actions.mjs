@@ -1,9 +1,9 @@
-import { getConfig, readBody, sendJson, supabaseFetch, toDatabaseAction, validateAction } from './_lib.mjs';
+import { getEventConfig, readBody, sendJson, supabaseFetch, toDatabaseAction, validateAction } from './_lib.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'Método não permitido' });
   try {
-    const config = getConfig();
+    const config = await getEventConfig();
     const body = await readBody(req);
     const incoming = Array.isArray(body.actions) ? body.actions.slice(0, 100) : [];
     const valid = [];

@@ -1,4 +1,4 @@
-import { DEFAULT_ROSTER, getConfig, readBody, sendJson, supabaseFetch } from './_lib.mjs';
+import { DEFAULT_ROSTER, getConfig, sendJson, supabaseFetch } from './_lib.mjs';
 
 const mapRow = (row) => ({ id: row.id, name: row.name, role: row.role, active: row.active });
 
@@ -21,16 +21,7 @@ export default async function handler(req, res) {
       }
       return sendJson(res, 200, { roster });
     }
-    if (req.method !== 'POST') return sendJson(res, 405, { error: 'Método não permitido' });
-    const body = await readBody(req);
-    const name = String(body.name || '').trim().replace(/\s+/g, ' ').slice(0, 80);
-    const role = body.role === 'Monitor' ? 'Monitor' : 'Atirador';
-    if (name.length < 3) return sendJson(res, 400, { error: 'Informe um nome válido.' });
-    await supabaseFetch('counter_roster?on_conflict=event_id,name', {
-      method: 'POST', headers: { Prefer: 'resolution=ignore-duplicates,return=representation' },
-      body: JSON.stringify([{ event_id: config.eventBaseId, name, role }])
-    });
-    sendJson(res, 200, { ok: true });
+    return sendJson(res, 405, { error: 'Método não permitido' });
   } catch (error) {
     sendJson(res, 500, { error: error.message || 'Falha ao atualizar equipe' });
   }

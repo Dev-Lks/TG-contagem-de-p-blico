@@ -2,8 +2,7 @@ const STORAGE = {
   device: 'contador.device.v1',
   profile: 'contador.profile.v1',
   pending: 'contador.pending.v1',
-  roster: 'contador.roster.v1',
-  rosterPending: 'contador.roster-pending.v1'
+  roster: 'contador.roster.v1'
 };
 
 const FALLBACK_ROSTER = [
@@ -22,12 +21,9 @@ const state = {
   pending: readJson(STORAGE.pending, []),
   profile: readJson(STORAGE.profile, null),
   roster: readJson(STORAGE.roster, FALLBACK_ROSTER),
-  rosterPending: readJson(STORAGE.rosterPending, []),
   deviceId: localStorage.getItem(STORAGE.device) || makeId(),
   syncing: false,
-  connection: 'offline',
-  demo: false,
-  demoActions: []
+  connection: 'connecting'
 };
 localStorage.setItem(STORAGE.device, state.deviceId);
 
@@ -48,16 +44,15 @@ async function fetchTimed(url, options = {}, timeout = 2500) {
   finally { clearTimeout(timer); }
 }
 
-function actionBase(kind) {
+function actionBase(kind, flow = 'in') {
   return {
     id: makeId(), kind, deviceId: state.deviceId,
     operator: state.profile?.operator || 'Não identificado',
-    gate: state.profile?.gate || '', flow: state.profile?.flow || 'in', createdAt: now()
+    gate: state.profile?.gate || '', flow, createdAt: now()
   };
 }
 
 function allActions() {
-  if (state.demo) return state.demoActions;
   const known = new Set(state.actions.map((a) => a.id));
   return [...state.actions, ...state.pending.filter((a) => !known.has(a.id))];
 }
@@ -74,7 +69,6 @@ function persistPending() {
 }
 
 async function sync() {
-  if (state.demo) return;
   if (state.syncing || !state.pending.length || !navigator.onLine) return;
   state.syncing = true;
   setConnection('syncing');
@@ -99,7 +93,6 @@ async function sync() {
 }
 
 async function refresh() {
-  if (state.demo) return;
   try {
     const latest = state.actions.at(-1)?.receivedAt;
     const endpoint = latest ? `/api/snapshot?after=${encodeURIComponent(latest)}` : '/api/snapshot';
@@ -130,26 +123,13 @@ async function refreshRoster() {
   } catch { /* Em modo local, mantém a equipe já salva neste aparelho. */ }
 }
 
-async function syncRoster() {
-  if (!state.rosterPending.length || !navigator.onLine || state.demo) return;
-  const remaining = [];
-  for (const person of state.rosterPending) {
-    try {
-      const response = await fetchTimed('/api/roster', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(person) });
-      if (!response.ok) throw new Error();
-    } catch { remaining.push(person); }
-  }
-  state.rosterPending = remaining;
-  localStorage.setItem(STORAGE.rosterPending, JSON.stringify(remaining));
-  if (!remaining.length) await refreshRoster();
-}
-
 function setConnection(mode) {
   state.connection = mode;
   const el = $('#connection');
-  el.classList.toggle('online', mode !== 'offline');
+  el.classList.toggle('online', mode === 'online' || mode === 'syncing');
   el.classList.toggle('offline', mode === 'offline');
-  el.lastChild.textContent = mode === 'online' ? 'Sincronizado' : mode === 'syncing' ? 'Enviando…' : `Offline${state.pending.length ? ` · ${state.pending.length} pendente(s)` : ''}`;
+  el.classList.toggle('connecting', mode === 'connecting');
+  el.lastChild.textContent = mode === 'online' ? 'Sincronizado' : mode === 'syncing' ? 'Enviando…' : mode === 'connecting' ? 'Conectando…' : `Offline${state.pending.length ? ` · ${state.pending.length} pendente(s)` : ''}`;
 }
 
 function totals(actions = allActions()) {
@@ -168,7 +148,7 @@ function totals(actions = allActions()) {
 function ownSessionActions() {
   if (!state.profile?.sessionId) return [];
   const startIndex = allActions().findIndex((a) => a.id === state.profile.sessionId);
-  return allActions().slice(Math.max(0, startIndex)).filter((a) => a.deviceId === state.deviceId && a.gate === state.profile.gate && a.flow === state.profile.flow);
+  return allActions().slice(Math.max(0, startIndex)).filter((a) => a.deviceId === state.deviceId && a.gate === state.profile.gate);
 }
 
 function ownTotal() {
@@ -196,8 +176,8 @@ function render() {
   $('#counter-card').classList.toggle('hidden', !active);
   if (active) {
     $('#assignment-gate').textContent = state.profile.gate;
-    $('#assignment-flow').textContent = state.profile.flow === 'in' ? 'ENTRADA' : 'SAÍDA';
-    $('#assignment-flow').classList.toggle('out', state.profile.flow === 'out');
+    $('#assignment-flow').textContent = 'ENTRADA E SAÍDA';
+    $('#assignment-flow').classList.remove('out');
     $('#operator-name').textContent = state.profile.operator;
     $('#device-total').textContent = ownTotal().toLocaleString('pt-BR');
     const candidate = undoCandidate();
@@ -205,7 +185,6 @@ function render() {
     $('#last-action').textContent = candidate ? `Última marcação: +${candidate.amount} às ${formatTime(candidate.clientCreatedAt || candidate.createdAt)}` : 'Nenhuma marcação disponível para desfazer.';
   } else if (state.profile) {
     $('#operator').value = state.profile.operator || '';
-    $('#flow').value = state.profile.flow || 'in';
   }
   renderDashboard();
   setConnection(navigator.onLine ? state.connection : 'offline');
@@ -217,9 +196,7 @@ function renderDashboard() {
   $('#present-total').textContent = t.present.toLocaleString('pt-BR');
   $('#in-total').textContent = t.entries.toLocaleString('pt-BR');
   $('#out-total').textContent = t.exits.toLocaleString('pt-BR');
-  $('#mode-label').textContent = state.demo ? 'SIMULAÇÃO LOCAL' : 'EVENTO REAL';
-  $('#mode-label').classList.toggle('demo', state.demo);
-  $('#demo-toggle').textContent = state.demo ? 'Voltar ao evento real' : 'Ver simulação';
+  $('#mode-label').textContent = 'EVENTO REAL';
   $('#peak-value').textContent = analysis.peak.total ? analysis.peak.label : '—';
   $('#peak-caption').textContent = analysis.peak.total ? `${analysis.peak.total.toLocaleString('pt-BR')} pessoas no período` : 'Aguardando dados';
   const topGate = Object.entries(t.byGate).sort(([, a], [, b]) => (b.in - b.out) - (a.in - a.out))[0];
@@ -284,18 +261,16 @@ function toast(message) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-function addCount(amount) {
-  if (state.demo) return toast('A simulação é somente para visualização. Volte ao evento real para contar.');
+function addCount(amount, flow) {
   if (!state.profile?.active) return;
-  queue({ ...actionBase('count'), amount });
+  queue({ ...actionBase('count', flow), amount });
   if (navigator.vibrate) navigator.vibrate(25);
 }
 
 $('#start-session').addEventListener('click', () => {
-  if (state.demo) return toast('Volte ao evento real antes de iniciar uma contagem.');
   const operator = $('#operator').value.trim();
   if (operator.length < 2) return toast('Selecione seu nome na lista.');
-  const profile = { operator, gate: $('#gate').value, flow: $('#flow').value, active: true };
+  const profile = { operator, gate: $('#gate').value, active: true };
   state.profile = profile;
   const start = actionBase('session_start');
   state.profile.sessionId = start.id;
@@ -303,31 +278,13 @@ $('#start-session').addEventListener('click', () => {
   queue(start);
 });
 
-$('#show-add-member').addEventListener('click', () => $('#add-member-form').classList.toggle('hidden'));
-$('#save-member').addEventListener('click', async () => {
-  const name = $('#new-member').value.trim().replace(/\s+/g, ' ');
-  const role = $('#new-member-role').value;
-  if (name.length < 3) return toast('Informe o nome da pessoa.');
-  if (state.roster.some((person) => person.name.toUpperCase() === name.toUpperCase())) return toast('Essa pessoa já está na lista.');
-  const localPerson = { id: `local-${makeId()}`, name, role, active: true };
-  state.roster.push(localPerson);
-  state.roster.sort((a, b) => a.role.localeCompare(b.role) || a.name.localeCompare(b.name));
-  localStorage.setItem(STORAGE.roster, JSON.stringify(state.roster));
-  $('#new-member').value = '';
-  $('#add-member-form').classList.add('hidden');
-  render();
-  state.rosterPending.push({ name, role });
-  localStorage.setItem(STORAGE.rosterPending, JSON.stringify(state.rosterPending));
-  await syncRoster();
-  toast(state.rosterPending.length ? 'Pessoa adicionada neste celular; será sincronizada quando o servidor estiver disponível.' : 'Pessoa adicionada à equipe.');
-});
-
-$('#add-one').addEventListener('click', () => addCount(1));
-$$('[data-add]').forEach((button) => button.addEventListener('click', () => addCount(Number(button.dataset.add))));
+$('#add-one-in').addEventListener('click', () => addCount(1, 'in'));
+$('#add-one-out').addEventListener('click', () => addCount(1, 'out'));
+$$('[data-add]').forEach((button) => button.addEventListener('click', () => addCount(Number(button.dataset.add), button.dataset.flow)));
 $('#undo').addEventListener('click', () => {
   const candidate = undoCandidate();
   if (!candidate) return;
-  queue({ ...actionBase('undo'), amount: -Number(candidate.amount), refId: candidate.id });
+  queue({ ...actionBase('undo', candidate.flow), amount: -Number(candidate.amount), refId: candidate.id });
   toast(`Marcação de +${candidate.amount} desfeita.`);
 });
 
@@ -364,50 +321,11 @@ $('#save-estimate').addEventListener('click', () => {
   toast('Estimativa registrada separadamente.');
 });
 
-function simulationActions() {
-  const patterns = [
-    ['14', 320, 0], ['15', 780, 25], ['16', 1210, 80], ['17', 1460, 210],
-    ['18', 1160, 420], ['19', 700, 610], ['20', 240, 680]
-  ];
-  const gates = state.config.gates.length ? state.config.gates : ['Entrada principal', 'Entrada lateral', 'Estacionamento'];
-  const people = state.roster.length ? state.roster : FALLBACK_ROSTER;
-  const generated = [];
-  let index = 0;
-  const addFlow = (hour, total, flow) => {
-    let remaining = total;
-    while (remaining > 0) {
-      const amount = Math.min(remaining, 3 + ((index * 7) % 8));
-      const minute = (index * 11) % 60;
-      const second = (index * 17) % 60;
-      const person = people[index % people.length];
-      generated.push({ id: `demo-${flow}-${hour}-${index}`, kind: 'count', deviceId: `demo-device-${index % 8}`, operator: person.name, gate: gates[index % gates.length], flow, amount, clientCreatedAt: `2026-08-08T${hour}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}.000-03:00`, receivedAt: `2026-08-08T${hour}:${String(minute).padStart(2, '0')}:00.000-03:00` });
-      remaining -= amount;
-      index += 1;
-    }
-  };
-  for (const [hour, entries, exits] of patterns) { addFlow(hour, entries, 'in'); addFlow(hour, exits, 'out'); }
-  return generated;
-}
-
-$('#demo-toggle').addEventListener('click', () => {
-  state.demo = !state.demo;
-  if (state.demo) {
-    state.demoActions = simulationActions();
-    toast('Simulação carregada. Nenhum dado foi enviado ao servidor.');
-  } else {
-    state.demoActions = [];
-    toast('Você voltou ao evento real.');
-    refresh();
-  }
-  render();
-});
-
-window.addEventListener('online', () => { refresh(); sync(); syncRoster(); });
+window.addEventListener('online', () => { refresh(); sync(); });
 window.addEventListener('offline', () => { setConnection('offline'); render(); });
-setInterval(() => { sync(); syncRoster(); refresh(); }, 3000);
+setInterval(() => { sync(); refresh(); }, 3000);
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 await refresh();
 await refreshRoster();
-await syncRoster();
 await sync();
 render();

@@ -1,9 +1,9 @@
-import { actionsCsv, getConfig, readActions, sendJson } from './_lib.mjs';
+import { actionsCsv, getEventConfig, readActions, sendJson } from './_lib.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return sendJson(res, 405, { error: 'Método não permitido' });
   try {
-    const config = getConfig();
+    const config = await getEventConfig();
     const actions = await readActions({ eventId: config.eventId });
     const format = new URL(req.url, 'https://local.invalid').searchParams.get('format');
     if (format === 'json') {

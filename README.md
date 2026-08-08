@@ -9,8 +9,8 @@ Aplicativo para vários celulares contarem entradas e saídas simultaneamente. A
 - fila offline no celular com reenvio automático;
 - IDs únicos, permitindo repetir uma solicitação sem duplicar a contagem;
 - painel consolidado e estimativa visual separada;
-- modo de simulação local, com fluxo por hora, pico e portão mais movimentado;
-- lista inicial de monitores/atiradores, com inclusão de novas pessoas pelo próprio painel;
+- painel real com fluxo por hora, pico e portão mais movimentado;
+- lista inicial de monitores/atiradores; inclusão protegida por senha somente pela API;
 - exportação CSV e backup JSON;
 - atualização incremental para reduzir o tráfego durante o evento;
 - chave elevada do Supabase somente no backend da Vercel.
@@ -62,8 +62,19 @@ O arquivo `.env` e os registros locais estão ignorados pelo Git.
 | `EVENT_ID` | `fiemg` |
 | `EVENT_NAME` | `Apoio à FIEMG` |
 | `EVENT_GATES` | `Entrada principal,Entrada lateral,Estacionamento` |
+| `ADMIN_PASSWORD` | senha forte exclusiva do responsável |
 
 Use um `EVENT_ID` novo para cada evento. O app acrescenta a data automaticamente no horário de Brasília (por exemplo, `fiemg-2026-08-08` e `fiemg-2026-08-09`), portanto hoje e amanhã ficam separados sem ninguém precisar trocar nada.
+
+Para adicionar alguém à equipe ou criar mais um portão, use a API protegida por senha; essas opções não aparecem no celular dos atiradores:
+
+```powershell
+$body = @{ password = 'SUA_SENHA'; action = 'add_person'; name = 'Atdr 120 NOME'; role = 'Atirador' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri 'https://SEU-APP.vercel.app/api/admin' -ContentType 'application/json' -Body $body
+
+$body = @{ password = 'SUA_SENHA'; action = 'add_gate'; gate = 'Entrada do estacionamento' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri 'https://SEU-APP.vercel.app/api/admin' -ContentType 'application/json' -Body $body
+```
 
 6. Clique em **Deploy**.
 
@@ -71,7 +82,7 @@ Depois do deploy, abra o endereço `https://nome-do-projeto.vercel.app`. Confirm
 
 ## 5. Entregar aos responsáveis
 
-Envie o mesmo link da Vercel para todos. A equipe já aparece na lista; o responsável pode adicionar alguém caso necessário. Cada atirador seleciona o próprio nome, portão e movimento. Recomenda-se um celular por fila para evitar contagem duplicada.
+Envie o mesmo link da Vercel para todos. A equipe já aparece na lista. Cada atirador seleciona o próprio nome e portão; no mesmo celular, ele registra tanto entradas quanto saídas. Recomenda-se um celular por fila para evitar contagem duplicada.
 
 Antes do evento:
 

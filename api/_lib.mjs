@@ -34,6 +34,18 @@ export function getConfig(env = process.env) {
   };
 }
 
+export async function getEventConfig(env = process.env) {
+  const config = getConfig(env);
+  try {
+    const rows = await supabaseFetch(`counter_settings?select=gates&event_id=eq.${encodeURIComponent(config.eventBaseId)}&limit=1`, {}, env);
+    const gates = rows?.[0]?.gates;
+    if (Array.isArray(gates) && gates.length) {
+      return { ...config, gates: [...new Set(gates.map((gate) => String(gate).trim()).filter(Boolean))].slice(0, 20) };
+    }
+  } catch { /* A primeira execução ainda pode não ter a tabela de configurações. */ }
+  return config;
+}
+
 export function validateAction(input, config) {
   if (!input || typeof input !== 'object') return 'Ação inválida';
   if (!/^[a-zA-Z0-9_-]{8,100}$/.test(String(input.id || ''))) return 'ID inválido';

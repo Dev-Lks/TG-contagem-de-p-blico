@@ -23,6 +23,7 @@ h2 { margin: 0 0 8px; font-size: 20px; }
 .status { flex: 0 0 auto; display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; }
 .status span { width: 9px; height: 9px; border-radius: 50%; background: #e85e52; box-shadow: 0 0 0 4px #e85e5222; }
 .status.online span { background: #8dd16c; box-shadow: 0 0 0 4px #8dd16c22; }
+.status.connecting span { background: #f1b44c; box-shadow: 0 0 0 4px #f1b44c22; }
 .tabs { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--card); border-bottom: 1px solid var(--line); }
 .tab { border: 0; border-bottom: 3px solid transparent; background: transparent; padding: 15px 8px 12px; color: var(--muted); font-weight: 800; }
 .tab.active { color: var(--green); border-bottom-color: var(--green); }
@@ -31,8 +32,6 @@ main { width: min(760px, 100%); margin: 0 auto; padding: 18px 16px 80px; }
 .view.active { display: block; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; box-shadow: 0 8px 24px #1b2b2410; }
 .setup-card { max-width: 480px; margin: 20px auto; }
-.add-member-trigger { padding: 0; min-height: 30px; font-size: 13px; text-align: left; }
-.add-member { margin-top: 12px; padding: 1px 14px 14px; border: 1px dashed #97a79b; border-radius: 12px; background: #f5f8f1; }
 .step-number { display: grid; place-items: center; width: 32px; height: 32px; background: var(--lime); color: var(--green); border-radius: 50%; font-weight: 900; margin-bottom: 15px; }
 .muted { color: var(--muted); }
 .small { font-size: 13px; }
@@ -54,6 +53,9 @@ button, .secondary { cursor: pointer; border-radius: 11px; min-height: 48px; bor
 .total-card strong { display: block; font-size: 48px; line-height: 1.05; margin: 6px; font-variant-numeric: tabular-nums; }
 .total-card small { color: #cad4cf; }
 .count-button { display: grid; place-items: center; align-content: center; width: min(72vw, 330px); aspect-ratio: 1; margin: 20px auto; border-radius: 50%; background: var(--green-2); color: white; border: 10px solid #d9e5d5; box-shadow: 0 13px 30px #174b3740, inset 0 -8px 0 #103f2d; touch-action: manipulation; user-select: none; }
+.count-direction-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.count-direction-buttons .count-button { width: 100%; margin: 20px 0; border-width: 7px; }
+.count-direction-buttons .count-button.out { background: #8b4d25; border-color: #f0d7c0; box-shadow: 0 13px 30px #6b3a1d40, inset 0 -8px 0 #693819; }
 .count-button:active { transform: translateY(4px); box-shadow: 0 5px 14px #174b3735, inset 0 -3px 0 #103f2d; }
 .count-button span { font-size: clamp(64px, 22vw, 96px); font-weight: 950; line-height: .9; }
 .count-button small { margin-top: 10px; letter-spacing: .18em; font-weight: 900; }
@@ -67,7 +69,6 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .hero-total small { color: #dce8e1; }
 .dashboard-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 12px; }
 .mode-label { padding: 6px 9px; border-radius: 99px; background: #e2edce; color: var(--green); font-size: 10px; font-weight: 900; letter-spacing: .11em; }
-.mode-label.demo { background: #fde3b4; color: #7b4a11; }
 .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 10px; }
 .metric-grid article { min-height: 112px; padding: 13px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
 .metric-grid span { display: block; color: var(--muted); font-size: 10px; font-weight: 900; letter-spacing: .07em; }
