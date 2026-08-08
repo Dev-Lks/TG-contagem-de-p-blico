@@ -27,7 +27,7 @@ h2 { margin: 0 0 8px; font-size: 20px; }
 .status span { width: 9px; height: 9px; border-radius: 50%; background: #e85e52; box-shadow: 0 0 0 4px #e85e5222; }
 .status.online span { background: #8dd16c; box-shadow: 0 0 0 4px #8dd16c22; }
 .status.connecting span { background: #f1b44c; box-shadow: 0 0 0 4px #f1b44c22; }
-.tabs { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--card); border-bottom: 1px solid var(--line); }
+.tabs { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: repeat(2, 1fr); background: var(--card); border-bottom: 1px solid var(--line); }
 .tab { border: 0; border-bottom: 3px solid transparent; background: transparent; padding: 15px 8px 12px; color: var(--muted); font-weight: 800; }
 .tab.active { color: var(--green); border-bottom-color: var(--green); }
 main { width: min(760px, 100%); margin: 0 auto; padding: 18px 16px 80px; }
