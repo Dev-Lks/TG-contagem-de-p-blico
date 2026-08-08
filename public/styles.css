@@ -52,6 +52,10 @@ button, .secondary { cursor: pointer; border-radius: 11px; min-height: 48px; bor
 .total-card span, .hero-total span { display: block; color: var(--lime); font-size: 11px; letter-spacing: .12em; font-weight: 900; }
 .total-card strong { display: block; font-size: 48px; line-height: 1.05; margin: 6px; font-variant-numeric: tabular-nums; }
 .total-card small { color: #cad4cf; }
+.live-direction-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 2px; }
+.live-direction-totals div { padding: 10px 7px; border: 1px solid var(--line); border-radius: 12px; text-align: center; background: var(--card); }
+.live-direction-totals span { display: block; color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: .06em; }
+.live-direction-totals strong { display: block; margin-top: 5px; font-size: 20px; font-variant-numeric: tabular-nums; }
 .count-button { display: grid; place-items: center; align-content: center; width: min(72vw, 330px); aspect-ratio: 1; margin: 20px auto; border-radius: 50%; background: var(--green-2); color: white; border: 10px solid #d9e5d5; box-shadow: 0 13px 30px #174b3740, inset 0 -8px 0 #103f2d; touch-action: manipulation; user-select: none; }
 .count-direction-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .count-direction-buttons .count-button { width: 100%; margin: 20px 0; border-width: 7px; }

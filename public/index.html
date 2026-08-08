@@ -7,7 +7,7 @@
   <meta name="description" content="Contagem confiável de entradas e saídas por portão.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=6">
+  <link rel="stylesheet" href="/styles.css?v=7">
   <title>Contador de Público</title>
 </head>
 <body>
@@ -50,6 +50,11 @@
           <span>CONTADO NESTE CELULAR</span>
           <strong id="device-total">0</strong>
           <small id="operator-name"></small>
+        </div>
+        <div class="live-direction-totals" aria-label="Totais do evento">
+          <div><span>ENTRADAS</span><strong id="counter-in-total">0</strong></div>
+          <div><span>SAÍDAS</span><strong id="counter-out-total">0</strong></div>
+          <div><span>PRESENTES</span><strong id="counter-present-total">0</strong></div>
         </div>
         <div class="count-direction-buttons">
           <button id="add-one-in" class="count-button in" aria-label="Registrar uma entrada"><span>+1</span><small>ENTRADA</small></button>
@@ -137,6 +142,6 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app.js?v=6"></script>
+  <script type="module" src="/app.js?v=7"></script>
 </body>
 </html>

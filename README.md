@@ -96,7 +96,7 @@ Antes do evento:
 O servidor local continua disponível para testar a interface sem Supabase:
 
 ```powershell
-npm start
+npm run dev
 ```
 
 Acesse `http://localhost:3000`. Os registros locais ficam em `data/actions.jsonl` e não são enviados ao GitHub.

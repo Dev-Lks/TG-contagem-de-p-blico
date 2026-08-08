@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "index.mjs",
   "scripts": {
-    "start": "node server.mjs",
+    "dev": "node server.mjs",
     "test": "node --test"
   },
   "engines": {

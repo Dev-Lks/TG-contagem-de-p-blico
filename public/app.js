@@ -186,6 +186,10 @@ function render() {
   } else if (state.profile) {
     $('#operator').value = state.profile.operator || '';
   }
+  const eventTotals = totals();
+  $('#counter-in-total').textContent = eventTotals.entries.toLocaleString('pt-BR');
+  $('#counter-out-total').textContent = eventTotals.exits.toLocaleString('pt-BR');
+  $('#counter-present-total').textContent = eventTotals.present.toLocaleString('pt-BR');
   renderDashboard();
   setConnection(navigator.onLine ? state.connection : 'offline');
 }
