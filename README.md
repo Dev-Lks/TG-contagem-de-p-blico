@@ -2,52 +2,89 @@
 
 Aplicativo para vários celulares contarem entradas e saídas simultaneamente. A Vercel publica o site e executa a API; o Supabase mantém o histórico persistente.
 
-## O que já está pronto
+---
 
-- registro por atirador, portão e sentido;
-- botões `+1`, `+5`, `+10` e desfazer auditável;
-- fila offline no celular com reenvio automático;
-- IDs únicos, permitindo repetir uma solicitação sem duplicar a contagem;
-- painel consolidado e estimativa visual separada;
-- painel real com fluxo por hora, pico e portão mais movimentado;
-- lista inicial de monitores/atiradores; inclusão protegida por senha somente pela API;
-- exportação CSV e backup JSON;
-- atualização incremental para reduzir o tráfego durante o evento;
-- chave elevada do Supabase somente no backend da Vercel.
+## Enviar para o Tomazeli
 
-## 1. Criar o banco no Supabase
+Tomazeli, segue o contador de público:
+
+**Link pros atiradores:**
+https://apoiotgfiemg.vercel.app
+
+**Cada atirador:**
+1. Abre o link no celular
+2. Seleciona o nome e o portão
+3. Aperta +1 ENTRADA ou +1 SAÍDA conforme o movimento
+4. Se errar, aperta Desfazer
+5. Se ficar sem internet, continua contando — sincroniza sozinho depois
+
+**Painel da diretoria (não mandar pros atiradores):**
+https://apoiotgfiemg.vercel.app/?painel
+
+Nele você vê público presente, entradas/saídas, fluxo por hora, movimento por portão, lista da equipe e exportação CSV/JSON.
+
+**Pra adicionar atirador ou portão (PowerShell no PC):**
+```powershell
+$body = @{ password = 'SUA_SENHA'; action = 'add_person'; name = 'Atdr 120 NOME'; role = 'Atirador' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri 'https://apoiotgfiemg.vercel.app/api/admin' -ContentType 'application/json' -Body $body
+
+$body = @{ password = 'SUA_SENHA'; action = 'add_gate'; gate = 'Nome do portão' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri 'https://apoiotgfiemg.vercel.app/api/admin' -ContentType 'application/json' -Body $body
+```
+
+**Importante:**
+- Um celular por fila, pra não contar dobrado
+- O dia operacional vira sozinho à meia-noite (horário de Brasília)
+- No painel tem exportação CSV e JSON se precisar de relatório
+- Qualquer coisa me chama.
+
+---
+
+## Tomazeli envia pros atiradores
+
+> **Link:** https://apoiotgfiemg.vercel.app
+>
+> **Como usar:**
+> 1. Abra o link no celular
+> 2. Escolha seu nome e o portão em que vai ficar
+> 3. Use +1 ENTRADA ou +1 SAÍDA conforme o movimento
+> 4. Use +5 só quando tiver certeza do grupo
+> 5. Se marcar errado, toque em Desfazer imediatamente
+> 6. Se a internet cair, continue contando normalmente — os registros sincronizam sozinhos quando voltar
+> 7. Ao trocar de posto, use "Trocar posto"
+>
+> **Atenção:** nunca conte a mesma fila em dois celulares ao mesmo tempo.
+
+---
+
+## Setup técnico (para o deploy)
+
+### 1. Criar o banco no Supabase
 
 1. Crie um projeto em [supabase.com](https://supabase.com).
 2. Abra **SQL Editor → New query**.
 3. Cole todo o conteúdo de [`supabase/schema.sql`](supabase/schema.sql).
-4. Clique em **Run**. As tabelas `counter_actions` e `counter_roster` deverão aparecer em **Table Editor**.
+4. Clique em **Run**.
 
-> Se você já executou uma versão anterior do SQL, rode o arquivo atualizado novamente: ele também cria a lista compartilhada da equipe.
-
-## 2. Obter as credenciais
+### 2. Obter as credenciais
 
 No painel do Supabase, abra **Settings → API Keys** e copie:
+- **Project URL**
+- Uma chave secreta no formato `sb_secret_...`
 
-- **Project URL**;
-- uma chave secreta nova no formato `sb_secret_...`.
+Nunca coloque essas chaves em arquivos públicos ou no GitHub.
 
-Também é possível usar a chave legada `service_role`. Nunca coloque nenhuma dessas chaves em `public/app.js`, no GitHub ou em mensagens. Elas ficam apenas nas variáveis protegidas da Vercel.
-
-## 3. Subir o código para o GitHub
-
-Crie um repositório privado vazio e, nesta pasta, execute:
+### 3. Subir o código para o GitHub
 
 ```powershell
 git add .
-git commit -m "Preparar contador para Supabase e Vercel"
+git commit -m "Preparar contador para deploy"
 git branch -M main
 git remote add origin URL_DO_REPOSITORIO
 git push -u origin main
 ```
 
-O arquivo `.env` e os registros locais estão ignorados pelo Git.
-
-## 4. Criar o projeto na Vercel
+### 4. Criar o projeto na Vercel
 
 1. Entre em [vercel.com](https://vercel.com) e selecione **Add New → Project**.
 2. Importe o repositório do GitHub.
@@ -64,42 +101,26 @@ O arquivo `.env` e os registros locais estão ignorados pelo Git.
 | `EVENT_GATES` | `Entrada principal,Entrada lateral,Estacionamento` |
 | `ADMIN_PASSWORD` | senha forte exclusiva do responsável |
 
-Use um `EVENT_ID` novo para cada evento. O app acrescenta a data automaticamente no horário de Brasília (por exemplo, `fiemg-2026-08-08` e `fiemg-2026-08-09`), portanto hoje e amanhã ficam separados sem ninguém precisar trocar nada.
-
-Para adicionar alguém à equipe ou criar mais um portão, use a API protegida por senha; essas opções não aparecem no celular dos atiradores:
-
-```powershell
-$body = @{ password = 'SUA_SENHA'; action = 'add_person'; name = 'Atdr 120 NOME'; role = 'Atirador' } | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri 'https://SEU-APP.vercel.app/api/admin' -ContentType 'application/json' -Body $body
-
-$body = @{ password = 'SUA_SENHA'; action = 'add_gate'; gate = 'Entrada do estacionamento' } | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri 'https://SEU-APP.vercel.app/api/admin' -ContentType 'application/json' -Body $body
-```
-
 6. Clique em **Deploy**.
 
-Depois do deploy, abra o endereço `https://nome-do-projeto.vercel.app`. Confirme no painel que aparece `0 entradas`, faça uma marcação de teste e verifique se uma linha surgiu em `counter_actions` no Supabase.
+Depois do deploy, acesse o endereço e faça uma marcação de teste.
 
-## 5. Entregar aos responsáveis
+### Antes do evento
 
-Envie o mesmo link da Vercel para todos. A equipe já aparece na lista. Cada atirador seleciona o próprio nome e portão; no mesmo celular, ele registra tanto entradas quanto saídas. Recomenda-se um celular por fila para evitar contagem duplicada.
+1. Faça uma contagem completa de teste
+2. Exporte o backup JSON
+3. Confirme que o painel mostra o dia operacional correto
+4. Confirme que o painel voltou a zero no novo dia
 
-Antes do evento:
-
-1. faça uma contagem completa de teste;
-2. exporte o backup JSON;
-3. confirme que o painel mostra o dia operacional correto; ele muda sozinho à meia-noite no horário de Brasília;
-4. confirme que o painel voltou a zero no novo dia.
+---
 
 ## Desenvolvimento local
-
-O servidor local continua disponível para testar a interface sem Supabase:
 
 ```powershell
 npm run dev
 ```
 
-Acesse `http://localhost:3000`. Os registros locais ficam em `data/actions.jsonl` e não são enviados ao GitHub.
+Acesse `http://localhost:3000`. Os registros locais ficam em `data/actions.jsonl`.
 
 ## Testes
 
