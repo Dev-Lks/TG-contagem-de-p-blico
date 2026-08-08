@@ -28,6 +28,13 @@ const state = {
 };
 localStorage.setItem(STORAGE.device, state.deviceId);
 
+if (location.search.includes('painel')) {
+  const tab = $('#tab-dashboard');
+  if (tab) tab.classList.remove('hidden');
+  const nav = document.querySelector('.tabs');
+  if (nav) nav.style.gridTemplateColumns = 'repeat(3, 1fr)';
+}
+
 function readJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
 }
