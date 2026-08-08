@@ -71,57 +71,90 @@
     </section>
 
     <section id="dashboard-view" class="view">
-      <div class="dashboard-toolbar">
-        <span id="mode-label" class="mode-label">EVENTO REAL</span>
+      <div class="executive-card">
+        <div class="executive-header">
+          <div>
+            <p class="eyebrow dark">RESUMO EXECUTIVO</p>
+            <h2 id="exec-event-name">Contagem do Evento</h2>
+          </div>
+          <span id="mode-label" class="mode-label">DADOS OFICIAIS</span>
+        </div>
+        <div class="exec-hero">
+          <span>PÚBLICO PRESENTE</span>
+          <strong id="present-total">0</strong>
+          <small id="exec-subtitle">Aguardando dados</small>
+        </div>
+        <div class="exec-kpi-grid">
+          <div class="exec-kpi"><span>Entradas</span><strong id="in-total">0</strong><small id="exec-in-sub">—</small></div>
+          <div class="exec-kpi"><span>Saídas</span><strong id="out-total">0</strong><small id="exec-out-sub">—</small></div>
+          <div class="exec-kpi"><span>Pico de fluxo</span><strong id="peak-value">—</strong><small id="peak-caption">Aguardando</small></div>
+          <div class="exec-kpi highlight"><span>Registros</span><strong id="action-count">0</strong><small>marcações auditáveis</small></div>
+        </div>
       </div>
-      <div class="hero-total">
-        <span>PÚBLICO PRESENTE</span>
-        <strong id="present-total">0</strong>
-        <small><b id="in-total">0</b> entradas · <b id="out-total">0</b> saídas</small>
+
+      <div class="card timeline-card">
+        <div class="section-heading">
+          <div><p class="eyebrow dark">EVOLUÇÃO DO PÚBLICO</p><h2>Ao longo do evento</h2></div>
+          <span id="timeline-caption">Acumulado</span>
+        </div>
+        <div id="timeline-chart" class="timeline-chart"></div>
+        <div class="chart-key">
+          <span><i class="in-key"></i>Entradas acumuladas</span>
+          <span><i class="present-key"></i>Presentes</span>
+          <span><i class="out-key"></i>Saídas acumuladas</span>
+        </div>
       </div>
-      <div class="metric-grid">
-        <article><span>PICO DE FLUXO</span><strong id="peak-value">—</strong><small id="peak-caption">Aguardando dados</small></article>
-        <article><span>POSTO MAIS ATIVO</span><strong id="top-gate">—</strong><small id="top-gate-caption">Aguardando dados</small></article>
-        <article><span>REGISTROS</span><strong id="action-count">0</strong><small>marcações auditáveis</small></article>
+
+      <div class="card gate-analysis-card">
+        <div class="section-heading">
+          <div><p class="eyebrow dark">DETALHAMENTO</p><h2>Movimento por portão</h2></div>
+          <span id="last-sync">Aguardando dados</span>
+        </div>
+        <div id="gate-breakdown" class="gate-breakdown"></div>
       </div>
+
       <div class="card flow-card">
-        <div class="section-heading"><div><p class="eyebrow dark">MOVIMENTAÇÃO</p><h2>Fluxo por hora</h2></div><span id="chart-caption">Entradas e saídas</span></div>
+        <div class="section-heading">
+          <div><p class="eyebrow dark">HORA A HORA</p><h2>Fluxo por período</h2></div>
+          <span id="chart-caption">Entradas e saídas</span>
+        </div>
         <div id="flow-chart" class="flow-chart"></div>
         <div class="chart-key"><span><i class="in-key"></i>Entradas</span><span><i class="out-key"></i>Saídas</span></div>
       </div>
-      <div class="section-heading"><h2>Por portão</h2><span id="last-sync">Aguardando dados</span></div>
-      <div id="gate-cards" class="gate-grid"></div>
 
       <div class="card team-card">
-        <div class="section-heading"><div><p class="eyebrow dark">EQUIPE</p><h2>Monitores e atiradores</h2></div><span id="team-summary">0 pessoas</span></div>
+        <div class="section-heading"><div><p class="eyebrow dark">EQUIPE EM CAMPO</p><h2>Monitores e atiradores</h2></div><span id="team-summary">0 pessoas</span></div>
         <div id="team-list" class="team-list"></div>
       </div>
 
-      <div class="card estimate-card">
-        <h2>Estimativa visual</h2>
-        <p class="muted">Use somente para conferência. A contagem dos portões continua sendo o número oficial.</p>
-        <div class="two-columns">
-          <label>Área ocupada (m²)<input id="area" type="number" min="1" max="100000" inputmode="decimal" placeholder="Ex.: 2000"></label>
-          <label>Densidade média
-            <select id="density">
-              <option value="0.5">Disperso — 0,5 pessoa/m²</option>
-              <option value="1">Confortável — 1 pessoa/m²</option>
-              <option value="2">Cheio — 2 pessoas/m²</option>
-              <option value="3">Muito cheio — 3 pessoas/m²</option>
-            </select>
-          </label>
+      <div class="two-column-cards">
+        <div class="card estimate-card">
+          <h2>Estimativa visual</h2>
+          <p class="muted">Use para conferência. A contagem oficial é a dos portões.</p>
+          <div class="two-columns">
+            <label>Área ocupada (m²)<input id="area" type="number" min="1" max="100000" inputmode="decimal" placeholder="Ex.: 2000"></label>
+            <label>Densidade média
+              <select id="density">
+                <option value="0.5">Disperso — 0,5/m²</option>
+                <option value="1">Confortável — 1/m²</option>
+                <option value="2">Cheio — 2/m²</option>
+                <option value="3">Muito cheio — 3/m²</option>
+              </select>
+            </label>
+          </div>
+          <label>Observação opcional<input id="estimate-note" maxlength="300" placeholder="Ex.: foto aérea do pátio às 14h"></label>
+          <div class="estimate-result">Estimativa: <strong id="estimate-preview">0</strong> pessoas</div>
+          <button id="save-estimate" class="secondary full">Registrar estimativa</button>
+          <p id="latest-estimate" class="muted small"></p>
         </div>
-        <label>Observação opcional<input id="estimate-note" maxlength="300" placeholder="Ex.: foto aérea do pátio às 14h"></label>
-        <div class="estimate-result">Estimativa: <strong id="estimate-preview">0</strong> pessoas</div>
-        <button id="save-estimate" class="secondary full">Registrar estimativa</button>
-        <p id="latest-estimate" class="muted small"></p>
-      </div>
 
-      <div class="card export-card">
-        <h2>Relatório</h2>
-        <div class="export-actions">
-          <a class="secondary" href="/api/export?format=csv" download>Baixar CSV</a>
-          <a class="secondary" href="/api/export?format=json" download>Backup JSON</a>
+        <div class="card export-card">
+          <h2>Relatório</h2>
+          <p class="muted">Exporte os dados para análise externa.</p>
+          <div class="export-actions">
+            <a class="secondary" href="/api/export?format=csv" download>Baixar CSV</a>
+            <a class="secondary" href="/api/export?format=json" download>Backup JSON</a>
+          </div>
         </div>
       </div>
     </section>

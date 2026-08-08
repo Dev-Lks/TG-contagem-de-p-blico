@@ -165,6 +165,11 @@ function render() {
   $('#event-name').textContent = state.config.eventName;
   const operationalDate = state.config.eventDate || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   $('#event-day').textContent = `Dia operacional: ${new Date(`${operationalDate}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'short' })}`;
+  $('#exec-event-name').textContent = state.config.eventName;
+  $('#exec-subtitle').textContent = new Date(`${operationalDate}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const tDash = totals();
+  $('#exec-in-sub').textContent = `${tDash.entries.toLocaleString('pt-BR')} pessoas`;
+  $('#exec-out-sub').textContent = `${tDash.exits.toLocaleString('pt-BR')} pessoas`;
   const operatorSelect = $('#operator');
   const operatorCurrent = operatorSelect.value || state.profile?.operator || '';
   operatorSelect.innerHTML = `<option value="">Selecione seu nome</option>${state.roster.map((person) => `<option value="${escapeHtml(person.name)}"${person.name === operatorCurrent ? ' selected' : ''}>${escapeHtml(person.name)} — ${person.role}</option>`).join('')}`;
@@ -196,24 +201,21 @@ function render() {
 
 function renderDashboard() {
   const t = totals();
-  const analysis = analytics(allActions());
+  const actions = allActions();
+  const analysis = analytics(actions);
   $('#present-total').textContent = t.present.toLocaleString('pt-BR');
   $('#in-total').textContent = t.entries.toLocaleString('pt-BR');
   $('#out-total').textContent = t.exits.toLocaleString('pt-BR');
-  $('#mode-label').textContent = 'EVENTO REAL';
   $('#peak-value').textContent = analysis.peak.total ? analysis.peak.label : '—';
-  $('#peak-caption').textContent = analysis.peak.total ? `${analysis.peak.total.toLocaleString('pt-BR')} pessoas no período` : 'Aguardando dados';
-  const topGate = Object.entries(t.byGate).sort(([, a], [, b]) => (b.in - b.out) - (a.in - a.out))[0];
-  $('#top-gate').textContent = topGate?.[0] || '—';
-  $('#top-gate-caption').textContent = topGate ? `${Math.max(0, topGate[1].in - topGate[1].out).toLocaleString('pt-BR')} pessoas no saldo` : 'Aguardando dados';
-  $('#action-count').textContent = allActions().filter((a) => ['count', 'undo'].includes(a.kind)).length.toLocaleString('pt-BR');
+  $('#peak-caption').textContent = analysis.peak.total ? `${analysis.peak.total.toLocaleString('pt-BR')} pessoas` : 'Aguardando';
+  const countActions = actions.filter((a) => ['count', 'undo'].includes(a.kind)).length;
+  $('#action-count').textContent = countActions.toLocaleString('pt-BR');
+
+  renderTimeline(computeTimeline(actions));
+  renderGateBreakdown(state.config.gates, t);
   renderFlowChart(analysis.hours);
-  $('#gate-cards').innerHTML = state.config.gates.map((gate) => {
-    const data = t.byGate[gate] || { in: 0, out: 0 };
-    return `<article class="gate-card"><h3>${escapeHtml(gate)}</h3><div class="gate-stats"><div><span>Entradas</span><strong>${Math.max(0, data.in).toLocaleString('pt-BR')}</strong></div><div><span>Saídas</span><strong>${Math.max(0, data.out).toLocaleString('pt-BR')}</strong></div><div><span>Saldo</span><strong>${Math.max(0, data.in - data.out).toLocaleString('pt-BR')}</strong></div></div></article>`;
-  }).join('');
   $('#last-sync').textContent = state.pending.length ? `${state.pending.length} registro(s) pendente(s)` : `Atualizado ${formatTime(now())}`;
-  const estimates = allActions().filter((a) => a.kind === 'estimate');
+  const estimates = actions.filter((a) => a.kind === 'estimate');
   const latest = estimates.at(-1);
   $('#latest-estimate').textContent = latest ? `Última estimativa: ${Number(latest.estimate).toLocaleString('pt-BR')} — ${latest.operator}${latest.note ? ` (${latest.note})` : ''}` : 'Nenhuma estimativa registrada.';
   const monitors = state.roster.filter((person) => person.role === 'Monitor').length;
@@ -222,6 +224,113 @@ function renderDashboard() {
     const total = analysis.byOperator[person.name] || 0;
     return `<article class="team-member"><span class="member-icon">${person.role === 'Monitor' ? '★' : '●'}</span><div><strong>${escapeHtml(person.name)}</strong><small>${person.role}${total ? ` · ${total.toLocaleString('pt-BR')} registros` : ''}</small></div></article>`;
   }).join('');
+}
+
+function computeTimeline(actions) {
+  const sorted = actions
+    .filter((a) => ['count', 'undo'].includes(a.kind))
+    .filter((a) => a.clientCreatedAt || a.receivedAt)
+    .sort((a, b) => String(a.clientCreatedAt || a.receivedAt).localeCompare(String(b.clientCreatedAt || b.receivedAt)));
+  if (!sorted.length) return [];
+  const intervalMs = 15 * 60 * 1000;
+  const points = [];
+  let currentKey = null;
+  let bucket = null;
+  let cumIn = 0;
+  let cumOut = 0;
+  for (const a of sorted) {
+    const time = new Date(a.clientCreatedAt || a.receivedAt);
+    const key = Math.floor(time.getTime() / intervalMs) * intervalMs;
+    if (key !== currentKey) {
+      if (bucket) points.push({ ...bucket, cumIn, cumOut, present: Math.max(0, cumIn - cumOut) });
+      currentKey = key;
+      bucket = { time: key, entries: 0, exits: 0 };
+    }
+    if (a.flow === 'out') { bucket.exits += Number(a.amount); cumOut += Number(a.amount); }
+    else { bucket.entries += Number(a.amount); cumIn += Number(a.amount); }
+  }
+  if (bucket) points.push({ ...bucket, cumIn, cumOut, present: Math.max(0, cumIn - cumOut) });
+  return points.length >= 2 ? points : [];
+}
+
+function renderTimeline(points) {
+  const el = $('#timeline-chart');
+  const caption = $('#timeline-caption');
+  if (!points.length) {
+    caption.textContent = 'Sem dados';
+    el.innerHTML = '<p class="muted small" style="text-align:center;padding:60px 0">Dados insuficientes para gerar o gráfico de evolução.</p>';
+    return;
+  }
+  caption.textContent = `${String(new Date(points[0].time).getHours()).padStart(2, '0')}:${String(new Date(points[0].time).getMinutes()).padStart(2, '0')} — ${String(new Date(points.at(-1).time).getHours()).padStart(2, '0')}:${String(new Date(points.at(-1).time).getMinutes()).padStart(2, '0')}`;
+  const maxVal = Math.max(1, ...points.map((p) => Math.max(p.cumIn, p.cumOut, p.present)));
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 100 100');
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.style.overflow = 'visible';
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  defs.innerHTML = '<linearGradient id="inGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#24674d"/><stop offset="100%" stop-color="#24674d" stop-opacity="0"/></linearGradient><linearGradient id="presGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d6eea9"/><stop offset="100%" stop-color="#d6eea9" stop-opacity="0"/></linearGradient>';
+  svg.appendChild(defs);
+  const margin = 3;
+  const toX = (i) => margin + (i / (points.length - 1)) * (100 - 2 * margin);
+  const toY = (v) => 100 - margin - (v / maxVal) * (100 - 2 * margin);
+  for (const f of [0.25, 0.5, 0.75]) {
+    const y = toY(maxVal * f);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', margin); line.setAttribute('y1', y);
+    line.setAttribute('x2', 100 - margin); line.setAttribute('y2', y);
+    line.setAttribute('stroke', '#d9d7cc44'); line.setAttribute('stroke-width', '0.3');
+    svg.appendChild(line);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', margin - 0.6); text.setAttribute('y', y + 1.2);
+    text.setAttribute('text-anchor', 'end'); text.setAttribute('font-size', '2.5');
+    text.setAttribute('fill', '#68736e'); text.setAttribute('font-weight', '600');
+    text.textContent = Math.round(maxVal * f).toLocaleString('pt-BR');
+    svg.appendChild(text);
+  }
+  function addPolyline(pointsArr, stroke, width, dash) {
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    poly.setAttribute('points', pointsArr.map((p, i) => `${toX(i)},${toY(p)}`).join(' '));
+    poly.setAttribute('fill', 'none'); poly.setAttribute('stroke', stroke);
+    poly.setAttribute('stroke-width', width); poly.setAttribute('stroke-linejoin', 'round');
+    poly.setAttribute('stroke-linecap', 'round');
+    if (dash) poly.setAttribute('stroke-dasharray', dash);
+    svg.appendChild(poly);
+  }
+  function addArea(pointsArr, fill, opacity) {
+    const last = points.length - 1;
+    const pts = `${toX(0)},${100 - margin} ${pointsArr.map((p, i) => `${toX(i)},${toY(p)}`).join(' ')} ${toX(last)},${100 - margin}`;
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', pts); poly.setAttribute('fill', fill); poly.setAttribute('opacity', opacity);
+    svg.appendChild(poly);
+  }
+  addArea(points.map((p) => p.cumIn), 'url(#inGrad)', '0.22');
+  addArea(points.map((p) => p.present), 'url(#presGrad)', '0.35');
+  addPolyline(points.map((p) => p.cumIn), '#24674d', '0.9');
+  addPolyline(points.map((p) => p.cumOut), '#dda565', '0.7', '1.5,1.5');
+  addPolyline(points.map((p) => p.present), '#9cbe3c', '1.3');
+  el.innerHTML = '';
+  el.appendChild(svg);
+}
+
+function renderGateBreakdown(gates, totals) {
+  const html = gates.map((gate) => {
+    const data = totals.byGate[gate] || { in: 0, out: 0 };
+    const absIn = Math.abs(data.in);
+    const absOut = Math.abs(data.out);
+    const total = absIn + absOut || 1;
+    const inPct = Math.round(absIn / total * 100);
+    const outPct = Math.round(absOut / total * 100);
+    const saldo = Math.max(0, absIn - absOut);
+    return `<div class="gate-row">
+      <h3>${escapeHtml(gate)}</h3>
+      <div class="gate-bars"><div class="gate-bar-in" style="width:${inPct}%"></div><div class="gate-bar-out" style="width:${outPct}%"></div></div>
+      <strong>${saldo.toLocaleString('pt-BR')}</strong>
+    </div>
+    <div class="gate-row" style="font-size:11px;color:var(--muted);min-height:0">
+      <span></span><span>${absIn.toLocaleString('pt-BR')} entradas · ${absOut.toLocaleString('pt-BR')} saídas</span><span></span>
+    </div>`;
+  }).join('');
+  $('#gate-breakdown').innerHTML = html || '<p class="muted small">Nenhum portão configurado.</p>';
 }
 
 function analytics(actions) {
