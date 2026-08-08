@@ -3,6 +3,9 @@
   "outputDirectory": "public",
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "index.mjs": { "includeFiles": "public/index.html" }
+  },
   "headers": [
     {
       "source": "/sw.js",

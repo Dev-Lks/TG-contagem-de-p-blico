@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "api/actions.mjs",
+  "main": "index.mjs",
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test"
