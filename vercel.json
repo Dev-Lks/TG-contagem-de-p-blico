@@ -1,8 +1,18 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "public",
-  "cleanUrls": true,
-  "trailingSlash": false,
+  "version": 2,
+  "builds": [
+    { "src": "api/actions.mjs", "use": "@vercel/node" },
+    { "src": "api/snapshot.mjs", "use": "@vercel/node" },
+    { "src": "api/roster.mjs", "use": "@vercel/node" },
+    { "src": "api/export.mjs", "use": "@vercel/node" },
+    { "src": "api/admin.mjs", "use": "@vercel/node" },
+    { "src": "public/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1.mjs" },
+    { "src": "/", "dest": "/public/index.html" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ],
   "headers": [
     {
       "source": "/sw.js",
