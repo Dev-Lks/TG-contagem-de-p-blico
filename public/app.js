@@ -423,40 +423,6 @@ $$('.tab').forEach((tab) => tab.addEventListener('click', () => {
   $$('.view').forEach((view) => view.classList.toggle('active', view.id === `${tab.dataset.view}-view`));
 }));
 
-function previewEstimate() {
-  const estimate = Math.round(Number($('#area').value || 0) * Number($('#density').value));
-  $('#estimate-preview').textContent = estimate.toLocaleString('pt-BR');
-  return estimate;
-}
-$('#area').addEventListener('input', previewEstimate);
-$('#density').addEventListener('change', previewEstimate);
-$('#save-estimate').addEventListener('click', () => {
-  const estimate = previewEstimate();
-  if (!estimate) return toast('Informe a área ocupada.');
-  const operator = state.profile?.operator || prompt('Nome de quem fez a estimativa:')?.trim();
-  if (!operator) return;
-  const base = actionBase('estimate');
-  queue({ ...base, operator, estimate, note: $('#estimate-note').value.trim() });
-  toast('Estimativa registrada separadamente.');
-});
-
-function previewEstimate() {
-  const estimate = Math.round(Number($('#area').value || 0) * Number($('#density').value));
-  $('#estimate-preview').textContent = estimate.toLocaleString('pt-BR');
-  return estimate;
-}
-$('#area').addEventListener('input', previewEstimate);
-$('#density').addEventListener('change', previewEstimate);
-$('#save-estimate').addEventListener('click', () => {
-  const estimate = previewEstimate();
-  if (!estimate) return toast('Informe a área ocupada.');
-  const operator = state.profile?.operator || prompt('Nome de quem fez a estimativa:')?.trim();
-  if (!operator) return;
-  const base = actionBase('estimate');
-  queue({ ...base, operator, estimate, note: $('#estimate-note').value.trim() });
-  toast('Estimativa registrada separadamente.');
-});
-
 window.addEventListener('online', () => { refresh(); sync(); });
 window.addEventListener('offline', () => { setConnection('offline'); render(); });
 setInterval(() => { sync(); refresh(); }, 3000);
