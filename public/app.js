@@ -23,6 +23,7 @@ const state = {
   roster: readJson(STORAGE.roster, FALLBACK_ROSTER),
   deviceId: localStorage.getItem(STORAGE.device) || makeId(),
   syncing: false,
+  refreshing: false,
   connection: 'connecting'
 };
 localStorage.setItem(STORAGE.device, state.deviceId);
@@ -80,19 +81,28 @@ async function sync() {
     });
     const result = await response.json();
     const done = new Set([...(result.accepted || []), ...(result.rejected || []).map((r) => r.id)]);
+    const doneActions = sending.filter((a) => done.has(a.id));
+    const merged = new Map(state.actions.map((a) => [a.id, a]));
+    for (const a of doneActions) {
+      merged.set(a.id, { ...a, receivedAt: a.clientCreatedAt || a.createdAt || new Date().toISOString() });
+    }
+    state.actions = [...merged.values()].sort((a, b) => String(a.receivedAt).localeCompare(String(b.receivedAt)) || a.id.localeCompare(b.id));
     state.pending = state.pending.filter((a) => !done.has(a.id));
     persistPending();
     if (result.rejected?.length) toast(`Não foi possível salvar ${result.rejected.length} registro(s).`);
-    await refresh();
+    setConnection('online');
+    render();
+    refresh();
   } catch {
     setConnection('offline');
   } finally {
     state.syncing = false;
-    render();
   }
 }
 
 async function refresh() {
+  if (state.refreshing) return;
+  state.refreshing = true;
   try {
     const latest = state.actions.at(-1)?.receivedAt;
     const endpoint = latest ? `/api/snapshot?after=${encodeURIComponent(latest)}` : '/api/snapshot';
@@ -100,14 +110,15 @@ async function refresh() {
     if (!response.ok) throw new Error();
     const data = await response.json();
     const changedDay = Boolean(state.config.eventId && data.config?.eventId && state.config.eventId !== data.config.eventId);
-    state.config = data.config;
     if (changedDay) state.actions = [];
+    if (data.config) state.config = data.config;
     const merged = new Map(state.actions.map((action) => [action.id, action]));
     for (const action of data.actions || []) merged.set(action.id, action);
     state.actions = [...merged.values()].sort((a, b) => String(a.receivedAt).localeCompare(String(b.receivedAt)) || a.id.localeCompare(b.id));
     setConnection('online');
     render();
   } catch { setConnection('offline'); }
+  finally { state.refreshing = false; }
 }
 
 async function refreshRoster() {
