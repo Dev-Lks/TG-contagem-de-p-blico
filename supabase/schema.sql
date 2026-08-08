@@ -21,6 +21,20 @@ create index if not exists counter_actions_event_received_idx
 create index if not exists counter_actions_event_device_idx
   on public.counter_actions (event_id, device_id, received_at);
 
+create table if not exists public.counter_roster (
+  id bigint generated always as identity primary key,
+  event_id text not null,
+  name text not null,
+  role text not null check (role in ('Monitor', 'Atirador')),
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  unique (event_id, name)
+);
+
+create index if not exists counter_roster_event_idx
+  on public.counter_roster (event_id, active, role, name);
+
 -- O navegador nunca acessa esta tabela diretamente. Somente as funções da
 -- Vercel usam a service role; portanto, não criamos políticas públicas.
 alter table public.counter_actions enable row level security;
+alter table public.counter_roster enable row level security;

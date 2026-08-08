@@ -7,7 +7,7 @@
   <meta name="description" content="Contagem confiável de entradas e saídas por portão.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=3">
+  <link rel="stylesheet" href="/styles.css?v=4">
   <title>Contador de Público</title>
 </head>
 <body>
@@ -32,8 +32,14 @@
         <h2>Identifique seu posto</h2>
         <p class="muted">Faça isso uma única vez antes de começar.</p>
         <label>Seu nome
-          <input id="operator" maxlength="80" autocomplete="name" placeholder="Ex.: Atirador Silva">
+          <select id="operator"><option value="">Carregando equipe…</option></select>
         </label>
+        <button id="show-add-member" class="text-button add-member-trigger" type="button">+ Adicionar pessoa à lista</button>
+        <div id="add-member-form" class="add-member hidden">
+          <label>Nome da pessoa<input id="new-member" maxlength="80" placeholder="Ex.: Atdr 000 NOME"></label>
+          <label>Função<select id="new-member-role"><option>Atirador</option><option>Monitor</option></select></label>
+          <button id="save-member" class="secondary full" type="button">Adicionar à equipe</button>
+        </div>
         <label>Portão
           <select id="gate"></select>
         </label>
@@ -71,13 +77,32 @@
     </section>
 
     <section id="dashboard-view" class="view">
+      <div class="dashboard-toolbar">
+        <span id="mode-label" class="mode-label">EVENTO REAL</span>
+        <button id="demo-toggle" class="secondary" type="button">Ver simulação</button>
+      </div>
       <div class="hero-total">
         <span>PÚBLICO PRESENTE</span>
         <strong id="present-total">0</strong>
         <small><b id="in-total">0</b> entradas · <b id="out-total">0</b> saídas</small>
       </div>
+      <div class="metric-grid">
+        <article><span>PICO DE FLUXO</span><strong id="peak-value">—</strong><small id="peak-caption">Aguardando dados</small></article>
+        <article><span>POSTO MAIS ATIVO</span><strong id="top-gate">—</strong><small id="top-gate-caption">Aguardando dados</small></article>
+        <article><span>REGISTROS</span><strong id="action-count">0</strong><small>marcações auditáveis</small></article>
+      </div>
+      <div class="card flow-card">
+        <div class="section-heading"><div><p class="eyebrow dark">MOVIMENTAÇÃO</p><h2>Fluxo por hora</h2></div><span id="chart-caption">Entradas e saídas</span></div>
+        <div id="flow-chart" class="flow-chart"></div>
+        <div class="chart-key"><span><i class="in-key"></i>Entradas</span><span><i class="out-key"></i>Saídas</span></div>
+      </div>
       <div class="section-heading"><h2>Por portão</h2><span id="last-sync">Aguardando dados</span></div>
       <div id="gate-cards" class="gate-grid"></div>
+
+      <div class="card team-card">
+        <div class="section-heading"><div><p class="eyebrow dark">EQUIPE</p><h2>Monitores e atiradores</h2></div><span id="team-summary">0 pessoas</span></div>
+        <div id="team-list" class="team-list"></div>
+      </div>
 
       <div class="card estimate-card">
         <h2>Estimativa visual</h2>
@@ -124,6 +149,6 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app.js?v=3"></script>
+  <script type="module" src="/app.js?v=4"></script>
 </body>
 </html>

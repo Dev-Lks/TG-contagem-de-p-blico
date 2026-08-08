@@ -1,5 +1,5 @@
-const CACHE = 'contador-publico-v4';
-const APP = ['/', '/index.html', '/styles.css?v=3', '/app.js?v=3', '/manifest.webmanifest', '/icon.svg'];
+const CACHE = 'contador-publico-v6';
+const APP = ['/', '/index.html', '/styles.css?v=4', '/app.js?v=4', '/manifest.webmanifest', '/icon.svg'];
 self.addEventListener('install', (event) => event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP)).then(() => self.skipWaiting())));
 self.addEventListener('activate', (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', (event) => {

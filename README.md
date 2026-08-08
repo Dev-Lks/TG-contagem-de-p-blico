@@ -9,6 +9,8 @@ Aplicativo para vários celulares contarem entradas e saídas simultaneamente. A
 - fila offline no celular com reenvio automático;
 - IDs únicos, permitindo repetir uma solicitação sem duplicar a contagem;
 - painel consolidado e estimativa visual separada;
+- modo de simulação local, com fluxo por hora, pico e portão mais movimentado;
+- lista inicial de monitores/atiradores, com inclusão de novas pessoas pelo próprio painel;
 - exportação CSV e backup JSON;
 - atualização incremental para reduzir o tráfego durante o evento;
 - chave elevada do Supabase somente no backend da Vercel.
@@ -18,7 +20,9 @@ Aplicativo para vários celulares contarem entradas e saídas simultaneamente. A
 1. Crie um projeto em [supabase.com](https://supabase.com).
 2. Abra **SQL Editor → New query**.
 3. Cole todo o conteúdo de [`supabase/schema.sql`](supabase/schema.sql).
-4. Clique em **Run**. A tabela `counter_actions` deverá aparecer em **Table Editor**.
+4. Clique em **Run**. As tabelas `counter_actions` e `counter_roster` deverão aparecer em **Table Editor**.
+
+> Se você já executou uma versão anterior do SQL, rode o arquivo atualizado novamente: ele também cria a lista compartilhada da equipe.
 
 ## 2. Obter as credenciais
 
@@ -67,7 +71,7 @@ Depois do deploy, abra o endereço `https://nome-do-projeto.vercel.app`. Confirm
 
 ## 5. Entregar aos responsáveis
 
-Envie o mesmo link da Vercel para todos. Cada atirador informa o próprio nome, portão e movimento. Recomenda-se um celular por fila para evitar contagem duplicada.
+Envie o mesmo link da Vercel para todos. A equipe já aparece na lista; o responsável pode adicionar alguém caso necessário. Cada atirador seleciona o próprio nome, portão e movimento. Recomenda-se um celular por fila para evitar contagem duplicada.
 
 Antes do evento:
 

@@ -1,5 +1,13 @@
 const PAGE_SIZE = 1000;
 
+export const DEFAULT_ROSTER = [
+  ['Mon TOMAZELI', 'Monitor'], ['Mon RODRIGO', 'Monitor'], ['Mon FONSECA', 'Monitor'], ['Mon SOUZA', 'Monitor'],
+  ['Atdr 045 LISBOA', 'Atirador'], ['Atdr 088 GUILHERME', 'Atirador'], ['Atdr 114 ASSIS', 'Atirador'],
+  ['Atdr 067 GABRIEL', 'Atirador'], ['Atdr 061 MIGUEL', 'Atirador'], ['Atdr 038 MIRANDA', 'Atirador'],
+  ['Atdr 004 BRAGA', 'Atirador'], ['Atdr 039 LIMA', 'Atirador'], ['Atdr 043 MORAIS', 'Atirador'],
+  ['Atdr 092 GUIMARÃES', 'Atirador'], ['Atdr 106 MUNIZ', 'Atirador']
+].map(([name, role]) => ({ name, role }));
+
 export function getConfig(env = process.env) {
   const gates = String(env.EVENT_GATES || 'Portão 1,Portão 2,Portão 3')
     .split(',').map((value) => value.trim()).filter(Boolean);
