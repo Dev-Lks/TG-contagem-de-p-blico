@@ -118,7 +118,7 @@ export async function readActions({ eventId, after = '', env = process.env }) {
       'select=*', `event_id=eq.${encodeURIComponent(eventId)}`,
       'order=received_at.asc,id.asc'
     ];
-    if (after) filters.push(`received_at=gt.${encodeURIComponent(after)}`);
+    if (after) filters.push(`received_at=gte.${encodeURIComponent(after)}`);
     const page = await supabaseFetch(`counter_actions?${filters.join('&')}`, {
       headers: { Range: `${offset}-${offset + PAGE_SIZE - 1}` }
     }, env);

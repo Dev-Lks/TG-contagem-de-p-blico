@@ -22,6 +22,7 @@ const state = {
   profile: readJson(STORAGE.profile, null),
   roster: readJson(STORAGE.roster, FALLBACK_ROSTER),
   deviceId: localStorage.getItem(STORAGE.device) || makeId(),
+  lastServerReceivedAt: '',
   syncing: false,
   refreshing: false,
   connection: 'connecting'
@@ -111,17 +112,21 @@ async function refresh() {
   if (state.refreshing) return;
   state.refreshing = true;
   try {
-    const latest = state.actions.at(-1)?.receivedAt;
-    const endpoint = latest ? `/api/snapshot?after=${encodeURIComponent(latest)}` : '/api/snapshot';
+    const endpoint = state.lastServerReceivedAt ? `/api/snapshot?after=${encodeURIComponent(state.lastServerReceivedAt)}` : '/api/snapshot';
     const response = await fetchTimed(endpoint, { cache: 'no-store' });
     if (!response.ok) throw new Error();
     const data = await response.json();
     const changedDay = Boolean(state.config.eventId && data.config?.eventId && state.config.eventId !== data.config.eventId);
-    if (changedDay) state.actions = [];
+    if (changedDay) { state.actions = []; state.lastServerReceivedAt = ''; }
     if (data.config) state.config = data.config;
     const merged = new Map(state.actions.map((action) => [action.id, action]));
     for (const action of data.actions || []) merged.set(action.id, action);
     state.actions = [...merged.values()].sort((a, b) => String(a.receivedAt).localeCompare(String(b.receivedAt)) || a.id.localeCompare(b.id));
+    for (const action of data.actions || []) {
+      if (action.receivedAt && (!state.lastServerReceivedAt || String(action.receivedAt).localeCompare(String(state.lastServerReceivedAt)) > 0)) {
+        state.lastServerReceivedAt = action.receivedAt;
+      }
+    }
     setConnection('online');
     render();
   } catch { setConnection('offline'); }
