@@ -1,0 +1,10 @@
+{
+  "name": "Contador de Público",
+  "short_name": "Contador",
+  "description": "Contagem de entradas e saídas por portão.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f1e8",
+  "theme_color": "#10281f",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

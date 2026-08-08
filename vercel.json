@@ -1,0 +1,22 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/app.js", "destination": "/public/app.js" },
+    { "source": "/styles.css", "destination": "/public/styles.css" },
+    { "source": "/sw.js", "destination": "/public/sw.js" },
+    { "source": "/manifest.webmanifest", "destination": "/public/manifest.webmanifest" },
+    { "source": "/icon.svg", "destination": "/public/icon.svg" }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [{ "key": "Service-Worker-Allowed", "value": "/" }, { "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
+  ]
+}

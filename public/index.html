@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10281f">
+  <meta name="description" content="Contagem confiável de entradas e saídas por portão.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css?v=3">
+  <title>Contador de Público</title>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">OPERAÇÃO AO VIVO</p>
+      <h1 id="event-name">Contagem do Evento</h1>
+    </div>
+    <div id="connection" class="status offline"><span></span>Sem conexão</div>
+  </header>
+
+  <nav class="tabs" aria-label="Telas principais">
+    <button class="tab active" data-view="counter">Contar</button>
+    <button class="tab" data-view="dashboard">Painel</button>
+    <button class="tab" data-view="help">Instruções</button>
+  </nav>
+
+  <main>
+    <section id="counter-view" class="view active">
+      <div id="setup-card" class="card setup-card">
+        <div class="step-number">1</div>
+        <h2>Identifique seu posto</h2>
+        <p class="muted">Faça isso uma única vez antes de começar.</p>
+        <label>Seu nome
+          <input id="operator" maxlength="80" autocomplete="name" placeholder="Ex.: Atirador Silva">
+        </label>
+        <label>Portão
+          <select id="gate"></select>
+        </label>
+        <label>Movimento
+          <select id="flow">
+            <option value="in">Entrada</option>
+            <option value="out">Saída</option>
+          </select>
+        </label>
+        <button id="start-session" class="primary full">Iniciar contagem</button>
+      </div>
+
+      <div id="counter-card" class="counter-wrap hidden">
+        <div class="assignment">
+          <div><span id="assignment-flow" class="flow-badge">ENTRADA</span><strong id="assignment-gate">Portão 1</strong></div>
+          <button id="change-post" class="text-button">Trocar posto</button>
+        </div>
+        <div class="total-card">
+          <span>CONTADO NESTE CELULAR</span>
+          <strong id="device-total">0</strong>
+          <small id="operator-name"></small>
+        </div>
+        <button id="add-one" class="count-button" aria-label="Adicionar uma pessoa">
+          <span>+1</span>
+          <small>PESSOA</small>
+        </button>
+        <div class="quick-actions">
+          <button data-add="5">+5</button>
+          <button data-add="10">+10</button>
+          <button id="undo" class="undo" disabled>↶ Desfazer</button>
+        </div>
+        <p id="last-action" class="last-action">Nenhuma marcação nesta sessão.</p>
+        <button id="end-session" class="secondary full">Encerrar meu turno</button>
+      </div>
+    </section>
+
+    <section id="dashboard-view" class="view">
+      <div class="hero-total">
+        <span>PÚBLICO PRESENTE</span>
+        <strong id="present-total">0</strong>
+        <small><b id="in-total">0</b> entradas · <b id="out-total">0</b> saídas</small>
+      </div>
+      <div class="section-heading"><h2>Por portão</h2><span id="last-sync">Aguardando dados</span></div>
+      <div id="gate-cards" class="gate-grid"></div>
+
+      <div class="card estimate-card">
+        <h2>Estimativa visual</h2>
+        <p class="muted">Use somente para conferência. A contagem dos portões continua sendo o número oficial.</p>
+        <div class="two-columns">
+          <label>Área ocupada (m²)<input id="area" type="number" min="1" max="100000" inputmode="decimal" placeholder="Ex.: 2000"></label>
+          <label>Densidade média
+            <select id="density">
+              <option value="0.5">Disperso — 0,5 pessoa/m²</option>
+              <option value="1">Confortável — 1 pessoa/m²</option>
+              <option value="2">Cheio — 2 pessoas/m²</option>
+              <option value="3">Muito cheio — 3 pessoas/m²</option>
+            </select>
+          </label>
+        </div>
+        <label>Observação opcional<input id="estimate-note" maxlength="300" placeholder="Ex.: foto aérea do pátio às 14h"></label>
+        <div class="estimate-result">Estimativa: <strong id="estimate-preview">0</strong> pessoas</div>
+        <button id="save-estimate" class="secondary full">Registrar estimativa</button>
+        <p id="latest-estimate" class="muted small"></p>
+      </div>
+
+      <div class="card export-card">
+        <h2>Relatório</h2>
+        <div class="export-actions">
+          <a class="secondary" href="/api/export?format=csv" download>Baixar CSV</a>
+          <a class="secondary" href="/api/export?format=json" download>Backup JSON</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="help-view" class="view">
+      <div class="card instructions">
+        <h2>Como contar</h2>
+        <ol>
+          <li>Escolha seu nome, portão e se está contando entrada ou saída.</li>
+          <li>Toque em <b>+1</b> para cada pessoa. Use +5 ou +10 somente quando tiver certeza do grupo.</li>
+          <li>Se marcar errado, toque imediatamente em <b>Desfazer</b>.</li>
+          <li>Não mude de portão no meio do turno. Use “Trocar posto” quando houver rendição.</li>
+          <li>Se a internet cair, continue contando: os registros ficam no celular e sincronizam depois.</li>
+        </ol>
+        <div class="warning"><b>Importante:</b> nunca conte a mesma fila em dois celulares.</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/app.js?v=3"></script>
+</body>
+</html>
