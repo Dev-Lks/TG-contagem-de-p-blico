@@ -95,10 +95,6 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .exec-kpi small { font-size: 10px; opacity: .6; }
 .exec-kpi.highlight small { opacity: .7; }
 
-/* ── Two-column card layout ── */
-.two-column-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
-.two-column-cards .card { margin-top: 0; }
-
 /* ── Section heading ── */
 .section-heading { display: flex; align-items: flex-start; justify-content: space-between; margin: 0 0 16px; }
 .section-heading h2 { margin: 0; }
@@ -143,13 +139,9 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .team-member strong { display: block; font-size: 12px; }
 .team-member small { color: var(--muted); font-size: 11px; }
 
-/* ── Estimate & Export ── */
-.estimate-card, .export-card { margin-top: 0; }
-.export-card { display: flex; flex-direction: column; }
-.export-card .export-actions { margin-top: auto; }
+/* ── Export ── */
+.export-card { margin-top: 18px; }
 .two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.estimate-result { padding: 14px; margin: 15px 0; background: #eef4dd; border-radius: 10px; text-align: center; }
-.estimate-result strong { font-size: 24px; }
 .export-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* ── Instructions ── */

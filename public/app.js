@@ -167,9 +167,9 @@ function render() {
   $('#event-day').textContent = `Dia operacional: ${new Date(`${operationalDate}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'short' })}`;
   $('#exec-event-name').textContent = state.config.eventName;
   $('#exec-subtitle').textContent = new Date(`${operationalDate}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-  const tDash = totals();
-  $('#exec-in-sub').textContent = `${tDash.entries.toLocaleString('pt-BR')} pessoas`;
-  $('#exec-out-sub').textContent = `${tDash.exits.toLocaleString('pt-BR')} pessoas`;
+  const eventTotals = totals();
+  $('#exec-in-sub').textContent = `${eventTotals.entries.toLocaleString('pt-BR')} pessoas`;
+  $('#exec-out-sub').textContent = `${eventTotals.exits.toLocaleString('pt-BR')} pessoas`;
   const operatorSelect = $('#operator');
   const operatorCurrent = operatorSelect.value || state.profile?.operator || '';
   operatorSelect.innerHTML = `<option value="">Selecione seu nome</option>${state.roster.map((person) => `<option value="${escapeHtml(person.name)}"${person.name === operatorCurrent ? ' selected' : ''}>${escapeHtml(person.name)} — ${person.role}</option>`).join('')}`;
@@ -191,7 +191,6 @@ function render() {
   } else if (state.profile) {
     $('#operator').value = state.profile.operator || '';
   }
-  const eventTotals = totals();
   $('#counter-in-total').textContent = eventTotals.entries.toLocaleString('pt-BR');
   $('#counter-out-total').textContent = eventTotals.exits.toLocaleString('pt-BR');
   $('#counter-present-total').textContent = eventTotals.present.toLocaleString('pt-BR');
@@ -215,9 +214,6 @@ function renderDashboard() {
   renderGateBreakdown(state.config.gates, t);
   renderFlowChart(analysis.hours);
   $('#last-sync').textContent = state.pending.length ? `${state.pending.length} registro(s) pendente(s)` : `Atualizado ${formatTime(now())}`;
-  const estimates = actions.filter((a) => a.kind === 'estimate');
-  const latest = estimates.at(-1);
-  $('#latest-estimate').textContent = latest ? `Última estimativa: ${Number(latest.estimate).toLocaleString('pt-BR')} — ${latest.operator}${latest.note ? ` (${latest.note})` : ''}` : 'Nenhuma estimativa registrada.';
   const monitors = state.roster.filter((person) => person.role === 'Monitor').length;
   $('#team-summary').textContent = `${state.roster.length} pessoas · ${monitors} monitores`;
   $('#team-list').innerHTML = state.roster.map((person) => {
@@ -403,10 +399,9 @@ $('#undo').addEventListener('click', () => {
 
 function closeSession(message) {
   if (!state.profile?.active) return;
-  queue({ ...actionBase('session_end') });
   state.profile.active = false;
   localStorage.setItem(STORAGE.profile, JSON.stringify(state.profile));
-  render();
+  queue({ ...actionBase('session_end') });
   toast(message);
 }
 $('#change-post').addEventListener('click', () => closeSession('Posto liberado para nova identificação.'));
@@ -416,6 +411,23 @@ $$('.tab').forEach((tab) => tab.addEventListener('click', () => {
   $$('.tab').forEach((t) => t.classList.toggle('active', t === tab));
   $$('.view').forEach((view) => view.classList.toggle('active', view.id === `${tab.dataset.view}-view`));
 }));
+
+function previewEstimate() {
+  const estimate = Math.round(Number($('#area').value || 0) * Number($('#density').value));
+  $('#estimate-preview').textContent = estimate.toLocaleString('pt-BR');
+  return estimate;
+}
+$('#area').addEventListener('input', previewEstimate);
+$('#density').addEventListener('change', previewEstimate);
+$('#save-estimate').addEventListener('click', () => {
+  const estimate = previewEstimate();
+  if (!estimate) return toast('Informe a área ocupada.');
+  const operator = state.profile?.operator || prompt('Nome de quem fez a estimativa:')?.trim();
+  if (!operator) return;
+  const base = actionBase('estimate');
+  queue({ ...base, operator, estimate, note: $('#estimate-note').value.trim() });
+  toast('Estimativa registrada separadamente.');
+});
 
 function previewEstimate() {
   const estimate = Math.round(Number($('#area').value || 0) * Number($('#density').value));

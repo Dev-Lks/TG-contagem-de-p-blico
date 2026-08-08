@@ -7,7 +7,7 @@
   <meta name="description" content="Contagem confiável de entradas e saídas por portão.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=7">
+  <link rel="stylesheet" href="/styles.css?v=8">
   <title>Contador de Público</title>
 </head>
 <body>
@@ -127,34 +127,14 @@
         <div id="team-list" class="team-list"></div>
       </div>
 
-      <div class="two-column-cards">
-        <div class="card estimate-card">
-          <h2>Estimativa visual</h2>
-          <p class="muted">Use para conferência. A contagem oficial é a dos portões.</p>
-          <div class="two-columns">
-            <label>Área ocupada (m²)<input id="area" type="number" min="1" max="100000" inputmode="decimal" placeholder="Ex.: 2000"></label>
-            <label>Densidade média
-              <select id="density">
-                <option value="0.5">Disperso — 0,5/m²</option>
-                <option value="1">Confortável — 1/m²</option>
-                <option value="2">Cheio — 2/m²</option>
-                <option value="3">Muito cheio — 3/m²</option>
-              </select>
-            </label>
-          </div>
-          <label>Observação opcional<input id="estimate-note" maxlength="300" placeholder="Ex.: foto aérea do pátio às 14h"></label>
-          <div class="estimate-result">Estimativa: <strong id="estimate-preview">0</strong> pessoas</div>
-          <button id="save-estimate" class="secondary full">Registrar estimativa</button>
-          <p id="latest-estimate" class="muted small"></p>
+      <div class="card export-card">
+        <div class="section-heading">
+          <div><p class="eyebrow dark">EXPORTAÇÃO</p><h2>Relatório</h2></div>
         </div>
-
-        <div class="card export-card">
-          <h2>Relatório</h2>
-          <p class="muted">Exporte os dados para análise externa.</p>
-          <div class="export-actions">
-            <a class="secondary" href="/api/export?format=csv" download>Baixar CSV</a>
-            <a class="secondary" href="/api/export?format=json" download>Backup JSON</a>
-          </div>
+        <p class="muted">Exporte os dados para análise externa.</p>
+        <div class="export-actions">
+          <a class="secondary" href="/api/export?format=csv" download>Baixar CSV</a>
+          <a class="secondary" href="/api/export?format=json" download>Backup JSON</a>
         </div>
       </div>
     </section>
@@ -175,6 +155,6 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app.js?v=7"></script>
+  <script type="module" src="/app.js?v=8"></script>
 </body>
 </html>
