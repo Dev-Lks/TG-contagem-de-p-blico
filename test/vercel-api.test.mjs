@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import actionsHandler from '../api/actions.mjs';
 import snapshotHandler from '../api/snapshot.mjs';
+import { saoPauloDate } from '../api/_lib.mjs';
 
 function mockResponse() {
   let body = '';
@@ -49,7 +50,7 @@ test('funções da Vercel gravam e leem pelo REST do Supabase', async () => {
     await actionsHandler({ method: 'POST', body: { actions: [action] }, url: '/api/actions' }, postRes);
     assert.equal(postRes.result().status, 200);
     assert.deepEqual(postRes.result().body.accepted, [action.id]);
-    assert.equal(inserted[0].event_id, 'evento-teste');
+    assert.equal(inserted[0].event_id, `evento-teste-${saoPauloDate()}`);
     assert.equal(receivedAuthorization, null, 'a chave sb_secret não deve ir no header Bearer');
 
     const getRes = mockResponse();

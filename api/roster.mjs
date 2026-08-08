@@ -11,13 +11,13 @@ export default async function handler(req, res) {
   try {
     const config = getConfig();
     if (req.method === 'GET') {
-      let roster = await list(config.eventId);
+      let roster = await list(config.eventBaseId);
       if (!roster.length) {
         await supabaseFetch('counter_roster?on_conflict=event_id,name', {
           method: 'POST', headers: { Prefer: 'resolution=ignore-duplicates,return=minimal' },
-          body: JSON.stringify(DEFAULT_ROSTER.map((person) => ({ ...person, event_id: config.eventId })))
+          body: JSON.stringify(DEFAULT_ROSTER.map((person) => ({ ...person, event_id: config.eventBaseId })))
         });
-        roster = await list(config.eventId);
+        roster = await list(config.eventBaseId);
       }
       return sendJson(res, 200, { roster });
     }
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     if (name.length < 3) return sendJson(res, 400, { error: 'Informe um nome válido.' });
     await supabaseFetch('counter_roster?on_conflict=event_id,name', {
       method: 'POST', headers: { Prefer: 'resolution=ignore-duplicates,return=representation' },
-      body: JSON.stringify([{ event_id: config.eventId, name, role }])
+      body: JSON.stringify([{ event_id: config.eventBaseId, name, role }])
     });
     sendJson(res, 200, { ok: true });
   } catch (error) {

@@ -8,11 +8,27 @@ export const DEFAULT_ROSTER = [
   ['Atdr 092 GUIMARÃES', 'Atirador'], ['Atdr 106 MUNIZ', 'Atirador']
 ].map(([name, role]) => ({ name, role }));
 
+export function saoPauloDate(now = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(now);
+  const value = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
+function baseEventId(value) {
+  return String(value || 'fiemg').trim().replace(/-\d{4}-\d{2}-\d{2}$/, '') || 'fiemg';
+}
+
 export function getConfig(env = process.env) {
   const gates = String(env.EVENT_GATES || 'Portão 1,Portão 2,Portão 3')
     .split(',').map((value) => value.trim()).filter(Boolean);
+  const eventDate = saoPauloDate();
+  const eventBaseId = baseEventId(env.EVENT_ID);
   return {
-    eventId: env.EVENT_ID || 'fiemg-2026-08-08',
+    eventId: `${eventBaseId}-${eventDate}`,
+    eventBaseId,
+    eventDate,
     eventName: env.EVENT_NAME || 'Contagem do Evento',
     gates: [...new Set(gates)].slice(0, 20)
   };

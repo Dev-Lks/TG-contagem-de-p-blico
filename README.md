@@ -59,11 +59,11 @@ O arquivo `.env` e os registros locais estão ignorados pelo Git.
 |---|---|
 | `SUPABASE_URL` | `https://abcdefgh.supabase.co` |
 | `SUPABASE_SECRET_KEY` | `sb_secret_...` |
-| `EVENT_ID` | `fiemg-2026-08-08` |
+| `EVENT_ID` | `fiemg` |
 | `EVENT_NAME` | `Apoio à FIEMG` |
 | `EVENT_GATES` | `Entrada principal,Entrada lateral,Estacionamento` |
 
-Use um `EVENT_ID` novo para cada evento. Isso inicia uma contagem zerada sem apagar o histórico anterior.
+Use um `EVENT_ID` novo para cada evento. O app acrescenta a data automaticamente no horário de Brasília (por exemplo, `fiemg-2026-08-08` e `fiemg-2026-08-09`), portanto hoje e amanhã ficam separados sem ninguém precisar trocar nada.
 
 6. Clique em **Deploy**.
 
@@ -77,9 +77,8 @@ Antes do evento:
 
 1. faça uma contagem completa de teste;
 2. exporte o backup JSON;
-3. altere `EVENT_ID` na Vercel para o identificador oficial;
-4. faça um novo deploy;
-5. confirme que o painel voltou a zero.
+3. confirme que o painel mostra o dia operacional correto; ele muda sozinho à meia-noite no horário de Brasília;
+4. confirme que o painel voltou a zero no novo dia.
 
 ## Desenvolvimento local
 

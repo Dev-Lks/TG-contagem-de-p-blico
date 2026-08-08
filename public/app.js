@@ -17,7 +17,7 @@ const FALLBACK_ROSTER = [
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const state = {
-  config: { eventName: 'Contagem do Evento', gates: ['Portão 1'] },
+  config: { eventName: 'Contagem do Evento', eventDate: '', eventId: '', gates: ['Portão 1'] },
   actions: [],
   pending: readJson(STORAGE.pending, []),
   profile: readJson(STORAGE.profile, null),
@@ -106,7 +106,9 @@ async function refresh() {
     const response = await fetchTimed(endpoint, { cache: 'no-store' });
     if (!response.ok) throw new Error();
     const data = await response.json();
+    const changedDay = Boolean(state.config.eventId && data.config?.eventId && state.config.eventId !== data.config.eventId);
     state.config = data.config;
+    if (changedDay) state.actions = [];
     const merged = new Map(state.actions.map((action) => [action.id, action]));
     for (const action of data.actions || []) merged.set(action.id, action);
     state.actions = [...merged.values()].sort((a, b) => String(a.receivedAt).localeCompare(String(b.receivedAt)) || a.id.localeCompare(b.id));
@@ -181,6 +183,8 @@ function undoCandidate() {
 
 function render() {
   $('#event-name').textContent = state.config.eventName;
+  const operationalDate = state.config.eventDate || new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  $('#event-day').textContent = `Dia operacional: ${new Date(`${operationalDate}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'short' })}`;
   const operatorSelect = $('#operator');
   const operatorCurrent = operatorSelect.value || state.profile?.operator || '';
   operatorSelect.innerHTML = `<option value="">Selecione seu nome</option>${state.roster.map((person) => `<option value="${escapeHtml(person.name)}"${person.name === operatorCurrent ? ' selected' : ''}>${escapeHtml(person.name)} — ${person.role}</option>`).join('')}`;

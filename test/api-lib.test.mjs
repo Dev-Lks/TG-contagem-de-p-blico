@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { actionsCsv, fromDatabaseAction, getConfig, toDatabaseAction, validateAction } from '../api/_lib.mjs';
+import { actionsCsv, fromDatabaseAction, getConfig, saoPauloDate, toDatabaseAction, validateAction } from '../api/_lib.mjs';
 
 const config = { eventId: 'evento', eventName: 'Evento', gates: ['Principal'] };
 const action = {
@@ -10,7 +10,7 @@ const action = {
 
 test('configuração da Vercel normaliza portões', () => {
   assert.deepEqual(getConfig({ EVENT_ID: 'x', EVENT_NAME: 'Teste', EVENT_GATES: 'Norte, Sul,Norte' }), {
-    eventId: 'x', eventName: 'Teste', gates: ['Norte', 'Sul']
+    eventId: `x-${saoPauloDate()}`, eventBaseId: 'x', eventDate: saoPauloDate(), eventName: 'Teste', gates: ['Norte', 'Sul']
   });
 });
 

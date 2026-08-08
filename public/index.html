@@ -7,7 +7,7 @@
   <meta name="description" content="Contagem confiável de entradas e saídas por portão.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=4">
+  <link rel="stylesheet" href="/styles.css?v=5">
   <title>Contador de Público</title>
 </head>
 <body>
@@ -15,6 +15,7 @@
     <div>
       <p class="eyebrow">OPERAÇÃO AO VIVO</p>
       <h1 id="event-name">Contagem do Evento</h1>
+      <p id="event-day" class="event-day">Carregando dia operacional…</p>
     </div>
     <div id="connection" class="status offline"><span></span>Sem conexão</div>
   </header>
@@ -149,6 +150,6 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app.js?v=4"></script>
+  <script type="module" src="/app.js?v=5"></script>
 </body>
 </html>
