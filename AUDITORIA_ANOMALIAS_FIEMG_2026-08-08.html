@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Auditoria temporal dos registros de contagem do evento FIEMG em 8 de agosto de 2026.">
+  <title>Auditoria de Anomalias — Contagem FIEMG</title>
+  <style>
+    :root {
+      --ink: #17211d;
+      --navy: #182d38;
+      --red: #a64236;
+      --amber: #c38124;
+      --green: #236449;
+      --paper: #f2f0ea;
+      --card: #fffefa;
+      --line: #d9ddd9;
+      --muted: #66716c;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.55; }
+    .page { width: min(1100px, calc(100% - 28px)); margin: 28px auto 64px; }
+    header { padding: clamp(30px, 6vw, 64px); color: white; background: linear-gradient(135deg, #142731, #274956); border-radius: 28px; box-shadow: 0 24px 60px #19313b24; }
+    .eyebrow { margin: 0 0 10px; color: #f0cb86; font-size: 11px; font-weight: 900; letter-spacing: .17em; text-transform: uppercase; }
+    h1 { max-width: 780px; margin: 0; font-size: clamp(36px, 7vw, 70px); line-height: 1; letter-spacing: -.045em; }
+    .subtitle { max-width: 760px; margin: 20px 0 0; color: #dce7eb; font-size: 17px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 24px; color: #c8d8de; font-size: 13px; }
+    .toolbar { display: flex; justify-content: flex-end; margin: 14px 0; }
+    button { padding: 10px 16px; color: var(--navy); background: white; border: 1px solid var(--navy); border-radius: 99px; font: inherit; font-weight: 800; cursor: pointer; }
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+    .summary article, .card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 12px 32px #172c220a; }
+    .summary article { min-height: 145px; padding: 22px; border-radius: 20px; }
+    .summary span { color: var(--muted); font-size: 10px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+    .summary strong { display: block; margin: 9px 0 4px; font-size: 38px; line-height: 1; letter-spacing: -.04em; }
+    .summary small { color: var(--muted); }
+    .intro { margin: 18px 0; padding: 22px 26px; background: #e7eeea; border-left: 5px solid var(--green); border-radius: 4px 16px 16px 4px; }
+    .intro p { margin: 0; }
+    .anomalies { display: grid; gap: 16px; }
+    .card { overflow: hidden; border-radius: 24px; }
+    .card-head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 24px 28px; border-bottom: 1px solid var(--line); }
+    .number { display: grid; place-items: center; width: 42px; height: 42px; color: white; background: var(--navy); border-radius: 13px; font-weight: 900; }
+    .card h2 { margin: 0; font-size: clamp(21px, 4vw, 29px); letter-spacing: -.025em; }
+    .tag { padding: 6px 10px; color: #713e12; background: #f8e6c5; border-radius: 99px; font-size: 10px; font-weight: 900; letter-spacing: .07em; text-transform: uppercase; }
+    .tag.high { color: #7d2922; background: #f5d8d3; }
+    .card-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; padding: 28px; }
+    .big-number { margin: 0; color: var(--red); font-size: clamp(48px, 8vw, 78px); font-weight: 900; line-height: .9; letter-spacing: -.05em; }
+    .big-number small { display: block; margin-top: 10px; color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: 0; }
+    .facts { display: grid; gap: 9px; margin-top: 20px; }
+    .fact { display: flex; justify-content: space-between; gap: 20px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .fact span { color: var(--muted); }
+    .fact b { text-align: right; }
+    .minute-bars { display: grid; gap: 12px; align-content: center; }
+    .minute { display: grid; grid-template-columns: 54px 1fr 45px; align-items: center; gap: 10px; font-size: 12px; }
+    .track { height: 18px; overflow: hidden; background: #e8e9e5; border-radius: 99px; }
+    .fill { display: block; width: var(--w); height: 100%; background: linear-gradient(90deg, var(--amber), var(--red)); border-radius: inherit; }
+    .people { display: grid; gap: 9px; margin-top: 8px; }
+    .person { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 12px 14px; background: #f4f5f1; border-radius: 12px; }
+    .person b { font-size: 14px; }
+    .person span { color: var(--muted); font-size: 12px; }
+    .callout { padding: 14px 16px; color: #5e5239; background: #fff5dd; border-radius: 13px; font-size: 13px; }
+    .gaps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 16px; }
+    .gap { padding: 14px; text-align: center; background: #f4f5f1; border-radius: 13px; }
+    .gap strong { display: block; font-size: 20px; }
+    .gap small { color: var(--muted); }
+    .conclusion { margin-top: 18px; padding: clamp(28px, 5vw, 46px); color: white; background: var(--navy); border-radius: 24px; }
+    .conclusion h2 { margin: 0 0 10px; font-size: 30px; }
+    .conclusion p { max-width: 850px; margin: 0; color: #dbe6e9; font-size: 17px; }
+    footer { margin-top: 18px; color: var(--muted); font-size: 11px; text-align: center; }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 18px, 1100px); margin-top: 9px; }
+      header { border-radius: 20px; }
+      .summary { grid-template-columns: 1fr 1fr; }
+      .card-head { grid-template-columns: auto 1fr; padding: 20px; }
+      .tag { grid-column: 2; justify-self: start; }
+      .card-body { grid-template-columns: 1fr; padding: 20px; }
+      .gaps { grid-template-columns: 1fr; }
+    }
+    @media print {
+      @page { size: A4; margin: 11mm; }
+      body { background: white; }
+      .page { width: 100%; margin: 0; }
+      .toolbar { display: none; }
+      header, .card, .summary article, .conclusion { break-inside: avoid; box-shadow: none; }
+      header { padding: 28px; border-radius: 16px; }
+      .summary { grid-template-columns: repeat(4, 1fr); }
+      .summary article { min-height: 112px; padding: 16px; }
+      .summary strong { font-size: 29px; }
+      .card-head, .card-body { padding: 18px; }
+      .big-number { font-size: 52px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Auditoria temporal · uso interno</p>
+      <h1>Anomalias da contagem</h1>
+      <p class="subtitle">Padrões de concentração encontrados nos registros do evento. Os itens abaixo indicam momentos que merecem conferência; isoladamente, não comprovam erro.</p>
+      <div class="meta"><span>Evento FIEMG</span><span>8 de agosto de 2026</span><span>3.031 registros analisados</span><span>Horário de Brasília</span></div>
+    </header>
+
+    <div class="toolbar"><button type="button" onclick="window.print()">Imprimir / salvar em PDF</button></div>
+
+    <section class="summary" aria-label="Resumo da auditoria">
+      <article><span>Entradas totais</span><strong>4.903</strong><small>valor líquido</small></article>
+      <article><span>Janela crítica</span><strong>22h02</strong><small>maior concentração</small></article>
+      <article><span>Pico por segundo</span><strong>14</strong><small>marcações simultâneas</small></article>
+      <article><span>Uso do +5</span><strong>55,8%</strong><small>das entradas</small></article>
+    </section>
+
+    <aside class="intro"><p><strong>Leitura geral:</strong> a soma do arquivo está matematicamente consistente. A auditoria aponta concentração de registros no fechamento, um pico localizado de saídas, uso frequente de contagem em lotes e pausas operacionais.</p></aside>
+
+    <section class="anomalies">
+      <article class="card">
+        <div class="card-head"><span class="number">01</span><h2>Entradas concentradas no fechamento</h2><span class="tag high">alta concentração</span></div>
+        <div class="card-body">
+          <div>
+            <p class="big-number">308<small>entradas entre 22h00 e 22h04</small></p>
+            <div class="facts">
+              <div class="fact"><span>Concentradas em 22h02–22h03</span><b>289 entradas</b></div>
+              <div class="fact"><span>Duração principal</span><b>2 minutos</b></div>
+              <div class="fact"><span>Responsáveis ativos</span><b>3</b></div>
+              <div class="fact"><span>Saídas no intervalo</span><b>5</b></div>
+            </div>
+          </div>
+          <div>
+            <div class="minute-bars" aria-label="Entradas por minuto das 22 horas">
+              <div class="minute"><b>22h00</b><span class="track"><i class="fill" style="--w:3.2%"></i></span><strong>5</strong></div>
+              <div class="minute"><b>22h01</b><span class="track"><i class="fill" style="--w:0%"></i></span><strong>0</strong></div>
+              <div class="minute"><b>22h02</b><span class="track"><i class="fill" style="--w:100%"></i></span><strong>155</strong></div>
+              <div class="minute"><b>22h03</b><span class="track"><i class="fill" style="--w:86.5%"></i></span><strong>134</strong></div>
+              <div class="minute"><b>22h04</b><span class="track"><i class="fill" style="--w:9%"></i></span><strong>14</strong></div>
+            </div>
+            <div class="people">
+              <div class="person"><div><b>Atdr 106 MUNIZ</b><br><span>22h02min41s–22h03min13s</span></div><strong>177</strong></div>
+              <div class="person"><div><b>Atdr 045 LISBOA</b><br><span>22h00min45s–22h04min21s</span></div><strong>75</strong></div>
+              <div class="person"><div><b>Atdr 114 ASSIS</b><br><span>22h02min49s–22h03min01s</span></div><strong>56</strong></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><span class="number">02</span><h2>Pico localizado de saídas</h2><span class="tag">conferir contexto</span></div>
+        <div class="card-body">
+          <div>
+            <p class="big-number">160<small>saídas em 20h18–20h19</small></p>
+            <div class="facts">
+              <div class="fact"><span>Saídas às 20h18</span><b>19</b></div>
+              <div class="fact"><span>Saídas às 20h19</span><b>141</b></div>
+              <div class="fact"><span>Participação nas saídas totais</span><b>56,3%</b></div>
+            </div>
+          </div>
+          <div class="callout"><strong>Interpretação possível:</strong> movimento coletivo ou concentração da marcação em um curto intervalo. O pico foi registrado por um responsável, enquanto outros dois registravam entradas no mesmo período.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><span class="number">03</span><h2>Contagem em lotes com botão +5</h2><span class="tag">impacto no total</span></div>
+        <div class="card-body">
+          <div>
+            <p class="big-number">2.735<small>entradas inseridas em lotes de cinco</small></p>
+            <div class="facts">
+              <div class="fact"><span>Cliques em +5 para entrada</span><b>547</b></div>
+              <div class="fact"><span>Entradas registradas com +1</span><b>2.171</b></div>
+              <div class="fact"><span>Parcela das entradas via +5</span><b>55,8%</b></div>
+            </div>
+          </div>
+          <div class="callout"><strong>Leitura:</strong> o botão +5 foi parte central da operação. O valor final depende da aplicação correta desses lotes durante movimentos de grupos.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><span class="number">04</span><h2>Intervalos sem novas marcações</h2><span class="tag">pausa operacional</span></div>
+        <div class="card-body">
+          <div>
+            <p class="big-number">11m34s<small>maior intervalo entre dois registros</small></p>
+            <p>Os períodos podem representar ausência de fluxo, pausa, troca de posição ou interrupção temporária da contagem.</p>
+          </div>
+          <div class="gaps">
+            <div class="gap"><strong>11m34s</strong><small>20h48min49s–21h00min24s</small></div>
+            <div class="gap"><strong>9m08s</strong><small>20h30min42s–20h39min51s</small></div>
+            <div class="gap"><strong>7m46s</strong><small>21h22min19s–21h30min05s</small></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="conclusion">
+      <h2>Conclusão da auditoria</h2>
+      <p>O total de 4.903 entradas está corretamente somado no arquivo. A principal ocorrência a conferir é o bloco de 308 entradas registrado no fechamento, especialmente as 289 entradas de 22h02–22h03. Confirmado que esse bloco representa uma contagem conjunta válida, o total consolidado permanece coerente.</p>
+    </section>
+
+    <footer>Fonte: contagem-evento(8).csv · Análise baseada nos horários informados pelos aparelhos e convertidos para Brasília.</footer>
+  </main>
+</body>
+</html>
