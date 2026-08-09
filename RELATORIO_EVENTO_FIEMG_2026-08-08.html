@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Relatório consolidado da contagem de público do evento FIEMG em 8 de agosto de 2026.">
+  <title>Relatório de Público — Apoio à FIEMG</title>
+  <style>
+    :root {
+      --ink: #17231e;
+      --green: #154c37;
+      --green-soft: #e6efe8;
+      --gold: #d9aa48;
+      --paper: #f4f2eb;
+      --card: #fffefa;
+      --muted: #65716b;
+      --line: #d9ded9;
+      --out: #b86e3d;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, #dfeadf 0 12%, transparent 32%),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    .page { width: min(1080px, calc(100% - 32px)); margin: 32px auto 64px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 6vw, 64px);
+      color: white;
+      background: linear-gradient(135deg, #102d23, #176143);
+      border-radius: 28px;
+      box-shadow: 0 24px 60px #15382a2b;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      right: -110px;
+      top: -150px;
+      border: 58px solid #ffffff12;
+      border-radius: 50%;
+    }
+    .kicker { margin: 0 0 12px; color: #dcebb7; font-size: 12px; font-weight: 850; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 0; font-size: clamp(34px, 7vw, 72px); line-height: .98; letter-spacing: -.045em; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 28px; color: #e6eee9; font-size: 14px; }
+    .hero-meta span { display: inline-flex; gap: 8px; align-items: center; }
+    .dot { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; }
+    .toolbar { display: flex; justify-content: flex-end; margin: 14px 0; }
+    .print {
+      border: 1px solid var(--green);
+      border-radius: 999px;
+      padding: 10px 16px;
+      color: var(--green);
+      background: #fffefa;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .metrics { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 14px; margin: 18px 0; }
+    .metric, .card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 12px 36px #1835280c; }
+    .metric { min-height: 180px; padding: 25px; border-radius: 22px; }
+    .metric.primary { color: white; background: var(--green); border-color: var(--green); }
+    .metric span { display: block; color: var(--muted); font-size: 11px; font-weight: 850; letter-spacing: .11em; text-transform: uppercase; }
+    .metric.primary span { color: #dcebb7; }
+    .metric strong { display: block; margin: 12px 0 4px; font-size: clamp(42px, 7vw, 66px); line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+    .metric small { color: var(--muted); }
+    .metric.primary small { color: #dce9e1; }
+    .grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; }
+    .card { padding: clamp(22px, 4vw, 34px); border-radius: 24px; }
+    .section-label { margin: 0 0 5px; color: var(--green); font-size: 11px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+    h2 { margin: 0 0 22px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -.03em; }
+    .chart { display: grid; grid-template-columns: repeat(6, 1fr); align-items: end; gap: 10px; height: 280px; padding-top: 20px; border-bottom: 1px solid var(--line); }
+    .hour { position: relative; display: flex; justify-content: center; align-items: end; gap: 4px; height: 100%; }
+    .bar { width: min(30px, 42%); min-height: 3px; border-radius: 8px 8px 0 0; }
+    .bar.in { height: var(--in); background: linear-gradient(#277957, var(--green)); }
+    .bar.out { height: var(--out-h); background: var(--out); }
+    .hour b { position: absolute; bottom: -26px; font-size: 12px; color: var(--muted); }
+    .hour em { position: absolute; top: calc(100% - var(--in) - 24px); color: var(--green); font-size: 11px; font-style: normal; font-weight: 800; }
+    .legend { display: flex; gap: 18px; margin-top: 38px; color: var(--muted); font-size: 12px; }
+    .legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 3px; background: var(--green); }
+    .legend .out-key { background: var(--out); }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 12px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    tfoot td { border-bottom: 0; font-weight: 900; }
+    .notice { margin-top: 18px; padding: 24px; border-left: 5px solid var(--gold); border-radius: 4px 18px 18px 4px; background: #fff9e8; }
+    .notice h2 { margin-bottom: 8px; font-size: 21px; }
+    .notice p { margin: 0; color: #62583e; }
+    .conclusion { margin-top: 18px; padding: clamp(28px, 5vw, 48px); color: white; background: #17231e; border-radius: 24px; }
+    .conclusion h2 { margin-bottom: 12px; }
+    .conclusion p { max-width: 850px; margin: 0; color: #dce4df; font-size: 18px; }
+    footer { display: flex; justify-content: space-between; gap: 20px; margin-top: 20px; padding: 16px 4px; color: var(--muted); font-size: 11px; }
+    @media (max-width: 760px) {
+      .page { width: min(100% - 20px, 1080px); margin-top: 10px; }
+      .hero { border-radius: 20px; }
+      .metrics, .grid { grid-template-columns: 1fr; }
+      .metric { min-height: 145px; }
+      .chart { height: 230px; gap: 5px; }
+      .hour em { display: none; }
+      .card { border-radius: 19px; }
+    }
+    @media print {
+      @page { size: A4; margin: 12mm; }
+      body { background: white; }
+      .page { width: 100%; margin: 0; }
+      .toolbar { display: none; }
+      .hero, .metric, .card, .notice, .conclusion { break-inside: avoid; box-shadow: none; }
+      .hero { padding: 30px; border-radius: 16px; }
+      .metrics { grid-template-columns: repeat(3, 1fr); }
+      .metric { min-height: 130px; padding: 18px; }
+      .metric strong { font-size: 38px; }
+      .grid { grid-template-columns: 1.45fr 1fr; }
+      .card { padding: 22px; }
+      .chart { height: 205px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="kicker">Relatório consolidado de público</p>
+      <h1>Apoio à FIEMG</h1>
+      <div class="hero-meta">
+        <span><i class="dot"></i> 8 de agosto de 2026</span>
+        <span><i class="dot"></i> Operação registrada das 17h41 às 22h04</span>
+        <span><i class="dot"></i> Horário de Brasília</span>
+      </div>
+    </header>
+
+    <div class="toolbar"><button class="print" type="button" onclick="window.print()">Imprimir / salvar em PDF</button></div>
+
+    <section class="metrics" aria-label="Indicadores principais">
+      <article class="metric primary">
+        <span>Público contabilizado</span>
+        <strong>4.903</strong>
+        <small>entradas registradas no período</small>
+      </article>
+      <article class="metric">
+        <span>Pico de fluxo</span>
+        <strong>19h</strong>
+        <small>1.563 movimentações na faixa</small>
+      </article>
+      <article class="metric">
+        <span>Movimentação total</span>
+        <strong>5.187</strong>
+        <small>entradas e saídas registradas</small>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <p class="section-label">Evolução do evento</p>
+        <h2>Fluxo por horário</h2>
+        <div class="chart" role="img" aria-label="Gráfico de entradas e saídas das 17 às 22 horas">
+          <div class="hour" style="--in:12.5%;--out-h:11.5%"><em>192</em><i class="bar in"></i><i class="bar out"></i><b>17h</b></div>
+          <div class="hour" style="--in:46.8%;--out-h:23%"><em>722</em><i class="bar in"></i><i class="bar out"></i><b>18h</b></div>
+          <div class="hour" style="--in:100%;--out-h:11%"><em>1.542</em><i class="bar in"></i><i class="bar out"></i><b>19h</b></div>
+          <div class="hour" style="--in:74.9%;--out-h:100%"><em>1.155</em><i class="bar in"></i><i class="bar out"></i><b>20h</b></div>
+          <div class="hour" style="--in:63.8%;--out-h:2%"><em>984</em><i class="bar in"></i><i class="bar out"></i><b>21h</b></div>
+          <div class="hour" style="--in:20%;--out-h:3%"><em>308</em><i class="bar in"></i><i class="bar out"></i><b>22h</b></div>
+        </div>
+        <div class="legend"><span><i></i>Entradas</span><span><i class="out-key"></i>Saídas</span></div>
+      </article>
+
+      <article class="card">
+        <p class="section-label">Dados consolidados</p>
+        <h2>Movimentação</h2>
+        <table>
+          <thead><tr><th>Hora</th><th>Entradas</th><th>Saídas</th></tr></thead>
+          <tbody>
+            <tr><td>17h</td><td>192</td><td>22</td></tr>
+            <tr><td>18h</td><td>722</td><td>44</td></tr>
+            <tr><td>19h</td><td>1.542</td><td>21</td></tr>
+            <tr><td>20h</td><td>1.155</td><td>191</td></tr>
+            <tr><td>21h</td><td>984</td><td>1</td></tr>
+            <tr><td>22h</td><td>308</td><td>5</td></tr>
+          </tbody>
+          <tfoot><tr><td>Total</td><td>4.903</td><td>284</td></tr></tfoot>
+        </table>
+      </article>
+    </section>
+
+    <aside class="notice">
+      <h2>Nota metodológica</h2>
+      <p>A contagem foi realizada em operação de campo. Como houve atuação em dupla, possibilidade de sobreposição e cobertura reduzida das saídas, os números devem ser tratados como estimativa operacional. O saldo entre entradas e saídas não representa, com segurança, o público presente ao encerramento.</p>
+    </aside>
+
+    <section class="conclusion">
+      <p class="kicker">Conclusão</p>
+      <h2>Aproximadamente 4,9 mil pessoas contabilizadas</h2>
+      <p>Os registros indicam maior concentração de público entre 19h e 21h, com pico às 19h. Para futuras operações, recomenda-se um único contador por fluxo ou fila e cobertura equivalente nas entradas e saídas.</p>
+    </section>
+
+    <footer>
+      <span>Fonte: exportação do sistema de contagem — 3.031 registros</span>
+      <span>Relatório gerado em 8 de agosto de 2026</span>
+    </footer>
+  </main>
+</body>
+</html>
