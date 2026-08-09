@@ -100,7 +100,7 @@ async function sync() {
     if (result.rejected?.length) toast(`Não foi possível salvar ${result.rejected.length} registro(s).`);
     setConnection('online');
     render();
-    refresh();
+    await refresh();
   } catch {
     setConnection('offline');
   } finally {
@@ -445,11 +445,38 @@ $$('.tab').forEach((tab) => tab.addEventListener('click', () => {
   $$('.view').forEach((view) => view.classList.toggle('active', view.id === `${tab.dataset.view}-view`));
 }));
 
-window.addEventListener('online', () => { refresh(); sync(); });
-window.addEventListener('offline', () => { setConnection('offline'); render(); });
-setInterval(() => { sync(); refresh(); }, 3000);
+let pollTimer;
+const isDashboard = location.search.includes('painel');
+
+function pollDelay() {
+  if (document.hidden) return null;
+  if (!navigator.onLine || state.connection === 'offline') return 60_000;
+  if (isDashboard) return 10_000;
+  if (state.profile?.active) return 30_000;
+  return 300_000;
+}
+
+function schedulePoll(delay = pollDelay()) {
+  clearTimeout(pollTimer);
+  if (delay === null) return;
+  pollTimer = setTimeout(runPoll, delay);
+}
+
+async function runPoll() {
+  await sync();
+  await refresh();
+  schedulePoll();
+}
+
+window.addEventListener('online', () => runPoll());
+window.addEventListener('offline', () => { setConnection('offline'); render(); schedulePoll(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) schedulePoll(null);
+  else runPoll();
+});
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 await refresh();
 await refreshRoster();
 await sync();
 render();
+schedulePoll();
