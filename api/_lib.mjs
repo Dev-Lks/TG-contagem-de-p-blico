@@ -1,11 +1,10 @@
 const PAGE_SIZE = 1000;
 
 export const DEFAULT_ROSTER = [
-  ['Mon TOMAZELI', 'Monitor'], ['Mon RODRIGO', 'Monitor'], ['Mon FONSECA', 'Monitor'], ['Mon SOUZA', 'Monitor'],
-  ['Atdr 045 LISBOA', 'Atirador'], ['Atdr 088 GUILHERME', 'Atirador'], ['Atdr 114 ASSIS', 'Atirador'],
-  ['Atdr 067 GABRIEL', 'Atirador'], ['Atdr 061 MIGUEL', 'Atirador'], ['Atdr 038 MIRANDA', 'Atirador'],
-  ['Atdr 004 BRAGA', 'Atirador'], ['Atdr 039 LIMA', 'Atirador'], ['Atdr 043 MORAIS', 'Atirador'],
-  ['Atdr 092 GUIMARÃES', 'Atirador'], ['Atdr 106 MUNIZ', 'Atirador']
+  ['Atdr 042 NEVES', 'Atirador'], ['Atdr 038 MIRANDA', 'Atirador'],
+  ['Atdr 045 LISBOA', 'Atirador'], ['Atdr 004 BRAGA', 'Atirador'],
+  ['Atdr 102 GONÇALVES', 'Atirador'], ['Atdr 083 BERNARDES', 'Atirador'],
+  ['Atdr 028 CIPRIANO', 'Atirador'], ['Atdr 106 MUNIZ', 'Atirador']
 ].map(([name, role]) => ({ name, role }));
 
 export function saoPauloDate(now = new Date()) {

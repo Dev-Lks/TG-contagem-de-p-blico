@@ -11,13 +11,13 @@ export default async function handler(req, res) {
   try {
     const config = getConfig();
     if (req.method === 'GET') {
-      let roster = await list(config.eventBaseId);
+      let roster = await list(config.eventId);
       if (!roster.length) {
         await supabaseFetch('counter_roster?on_conflict=event_id,name', {
           method: 'POST', headers: { Prefer: 'resolution=ignore-duplicates,return=minimal' },
-          body: JSON.stringify(DEFAULT_ROSTER.map((person) => ({ ...person, event_id: config.eventBaseId })))
+          body: JSON.stringify(DEFAULT_ROSTER.map((person) => ({ ...person, event_id: config.eventId })))
         });
-        roster = await list(config.eventBaseId);
+        roster = await list(config.eventId);
       }
       return sendJson(res, 200, { roster });
     }
