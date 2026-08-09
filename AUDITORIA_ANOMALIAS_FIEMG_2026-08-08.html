@@ -76,17 +76,51 @@
       .gaps { grid-template-columns: 1fr; }
     }
     @media print {
-      @page { size: A4; margin: 11mm; }
+      @page { size: A4; margin: 8mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { background: white; }
       .page { width: 100%; margin: 0; }
       .toolbar { display: none; }
-      header, .card, .summary article, .conclusion { break-inside: avoid; box-shadow: none; }
-      header { padding: 28px; border-radius: 16px; }
+      header, .card, .summary article, .conclusion { box-shadow: none; }
+      header { padding: 18px 22px; border-radius: 12px; }
+      header h1 { font-size: 34px; }
+      .subtitle { margin-top: 8px; font-size: 12px; line-height: 1.35; }
+      .meta { gap: 4px 14px; margin-top: 10px; font-size: 9px; }
       .summary { grid-template-columns: repeat(4, 1fr); }
-      .summary article { min-height: 112px; padding: 16px; }
-      .summary strong { font-size: 29px; }
-      .card-head, .card-body { padding: 18px; }
-      .big-number { font-size: 52px; }
+      .summary { gap: 6px; margin: 8px 0; }
+      .summary article { min-height: 72px; padding: 10px 12px; border-radius: 10px; break-inside: avoid; }
+      .summary span { font-size: 7px; }
+      .summary strong { margin: 4px 0 2px; font-size: 22px; }
+      .summary small { font-size: 8px; }
+      .intro { margin: 8px 0; padding: 9px 12px; font-size: 9px; line-height: 1.35; }
+      .anomalies { gap: 8px; }
+      .card { border-radius: 12px; break-inside: avoid-page; }
+      .card-head { gap: 9px; padding: 10px 13px; }
+      .number { width: 28px; height: 28px; border-radius: 8px; font-size: 10px; }
+      .card h2 { font-size: 17px; }
+      .tag { padding: 4px 7px; font-size: 7px; }
+      .card-body { gap: 14px; padding: 12px 14px; }
+      .big-number { font-size: 38px; }
+      .big-number small { margin-top: 5px; font-size: 8px; }
+      .facts { gap: 2px; margin-top: 8px; }
+      .fact { padding: 4px 0; font-size: 9px; }
+      .minute-bars { gap: 5px; }
+      .minute { grid-template-columns: 38px 1fr 28px; gap: 6px; font-size: 8px; }
+      .track { height: 10px; }
+      .people { gap: 4px; margin-top: 5px; }
+      .person { padding: 6px 8px; border-radius: 7px; }
+      .person b { font-size: 9px; }
+      .person span { font-size: 7px; }
+      .person strong { font-size: 10px; }
+      .callout { padding: 9px 10px; font-size: 9px; }
+      .gaps { gap: 5px; margin-top: 8px; }
+      .gap { padding: 8px; border-radius: 8px; }
+      .gap strong { font-size: 14px; }
+      .gap small { font-size: 7px; }
+      .conclusion { margin-top: 8px; padding: 16px 18px; border-radius: 12px; break-inside: avoid; }
+      .conclusion h2 { margin-bottom: 5px; font-size: 19px; }
+      .conclusion p { font-size: 10px; }
+      footer { margin-top: 6px; padding: 6px; font-size: 7px; }
     }
   </style>
 </head>
