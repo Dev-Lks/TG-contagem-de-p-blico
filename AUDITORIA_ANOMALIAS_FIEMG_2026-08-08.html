@@ -102,13 +102,13 @@
     <div class="toolbar"><button type="button" onclick="window.print()">Imprimir / salvar em PDF</button></div>
 
     <section class="summary" aria-label="Resumo da auditoria">
-      <article><span>Entradas totais</span><strong>4.903</strong><small>valor líquido</small></article>
-      <article><span>Janela crítica</span><strong>22h02</strong><small>maior concentração</small></article>
-      <article><span>Pico por segundo</span><strong>14</strong><small>marcações simultâneas</small></article>
-      <article><span>Uso do +5</span><strong>55,8%</strong><small>das entradas</small></article>
+      <article><span>Bloco no fechamento</span><strong>308</strong><small>entradas em 4 minutos</small></article>
+      <article><span>Muniz</span><strong>177</strong><small>entradas em 32 segundos</small></article>
+      <article><span>Assis</span><strong>56</strong><small>entradas em 12 segundos</small></article>
+      <article><span>Lisboa</span><strong>40</strong><small>entradas em 1 segundo</small></article>
     </section>
 
-    <aside class="intro"><p><strong>Leitura geral:</strong> a soma do arquivo está matematicamente consistente. A auditoria aponta concentração de registros no fechamento, um pico localizado de saídas, uso frequente de contagem em lotes e pausas operacionais.</p></aside>
+    <aside class="intro"><p><strong>Foco desta auditoria:</strong> somente lançamentos feitos pelos atiradores em velocidade ou combinação fora do padrão. Pausas, uso normal do +5 e variações naturais de fluxo foram retirados.</p></aside>
 
     <section class="anomalies">
       <article class="card">
@@ -141,46 +141,48 @@
       </article>
 
       <article class="card">
-        <div class="card-head"><span class="number">02</span><h2>Pico localizado de saídas</h2><span class="tag">conferir contexto</span></div>
+        <div class="card-head"><span class="number">02</span><h2>Entrada e saída em ritmo extremo</h2><span class="tag high">mesmo responsável</span></div>
         <div class="card-body">
           <div>
-            <p class="big-number">160<small>saídas em 20h18–20h19</small></p>
+            <p class="big-number">288<small>movimentações por Atdr 106 MUNIZ em 3 minutos</small></p>
             <div class="facts">
+              <div class="fact"><span>Entradas às 20h18</span><b>98</b></div>
               <div class="fact"><span>Saídas às 20h18</span><b>19</b></div>
               <div class="fact"><span>Saídas às 20h19</span><b>141</b></div>
-              <div class="fact"><span>Participação nas saídas totais</span><b>56,3%</b></div>
+              <div class="fact"><span>Saídas às 20h20</span><b>30</b></div>
             </div>
           </div>
-          <div class="callout"><strong>Interpretação possível:</strong> movimento coletivo ou concentração da marcação em um curto intervalo. O pico foi registrado por um responsável, enquanto outros dois registravam entradas no mesmo período.</div>
+          <div class="callout"><strong>Por que chama atenção:</strong> o mesmo responsável registrou entradas e saídas em grande volume, praticamente ao mesmo tempo, chegando a sete marcações em um segundo. O bloco deve ser confirmado com quem estava operando o aparelho.</div>
         </div>
       </article>
 
       <article class="card">
-        <div class="card-head"><span class="number">03</span><h2>Contagem em lotes com botão +5</h2><span class="tag">impacto no total</span></div>
+        <div class="card-head"><span class="number">03</span><h2>Lançamentos instantâneos em sequência</h2><span class="tag high">velocidade extrema</span></div>
         <div class="card-body">
           <div>
-            <p class="big-number">2.735<small>entradas inseridas em lotes de cinco</small></p>
+            <p class="big-number">40<small>entradas em um único segundo por Atdr 045 LISBOA</small></p>
             <div class="facts">
-              <div class="fact"><span>Cliques em +5 para entrada</span><b>547</b></div>
-              <div class="fact"><span>Entradas registradas com +1</span><b>2.171</b></div>
-              <div class="fact"><span>Parcela das entradas via +5</span><b>55,8%</b></div>
+              <div class="fact"><span>20h43min25s</span><b>40 entradas</b></div>
+              <div class="fact"><span>21h33min47s</span><b>30 entradas</b></div>
+              <div class="fact"><span>21h45min33s</span><b>30 entradas</b></div>
+              <div class="fact"><span>21h45min34s</span><b>30 entradas</b></div>
             </div>
           </div>
-          <div class="callout"><strong>Leitura:</strong> o botão +5 foi parte central da operação. O valor final depende da aplicação correta desses lotes durante movimentos de grupos.</div>
+          <div class="callout"><strong>Por que chama atenção:</strong> são vários toques em +5 dentro do mesmo segundo. Isso pode representar grupos contados previamente e lançados de uma vez, mas não corresponde ao ritmo normal de passagem individual.</div>
         </div>
       </article>
 
       <article class="card">
-        <div class="card-head"><span class="number">04</span><h2>Intervalos sem novas marcações</h2><span class="tag">pausa operacional</span></div>
+        <div class="card-head"><span class="number">04</span><h2>Outros picos individuais</h2><span class="tag">conferência rápida</span></div>
         <div class="card-body">
           <div>
-            <p class="big-number">11m34s<small>maior intervalo entre dois registros</small></p>
-            <p>Os períodos podem representar ausência de fluxo, pausa, troca de posição ou interrupção temporária da contagem.</p>
+            <p class="big-number">90<small>entradas por Atdr 114 ASSIS no minuto 19h30</small></p>
+            <p>Além do bloco de 56 entradas em 12 segundos no fechamento, houve outro minuto com concentração elevada no mesmo aparelho.</p>
           </div>
           <div class="gaps">
-            <div class="gap"><strong>11m34s</strong><small>20h48min49s–21h00min24s</small></div>
-            <div class="gap"><strong>9m08s</strong><small>20h30min42s–20h39min51s</small></div>
-            <div class="gap"><strong>7m46s</strong><small>21h22min19s–21h30min05s</small></div>
+            <div class="gap"><strong>9/s</strong><small>Muniz às 17h44min42s</small></div>
+            <div class="gap"><strong>8/s</strong><small>Muniz às 22h02min49s</small></div>
+            <div class="gap"><strong>6/s</strong><small>Assis às 22h02min49s</small></div>
           </div>
         </div>
       </article>
@@ -188,7 +190,7 @@
 
     <section class="conclusion">
       <h2>Conclusão da auditoria</h2>
-      <p>O total de 4.903 entradas está corretamente somado no arquivo. A principal ocorrência a conferir é o bloco de 308 entradas registrado no fechamento, especialmente as 289 entradas de 22h02–22h03. Confirmado que esse bloco representa uma contagem conjunta válida, o total consolidado permanece coerente.</p>
+      <p>Os registros mais duvidosos estão concentrados em poucos aparelhos e horários. O bloco principal é o fechamento, com 308 entradas em quatro minutos. Também merecem confirmação as 288 movimentações registradas por Muniz entre 20h18 e 20h20 e os lotes instantâneos de Lisboa. O restante da operação não foi incluído por apresentar comportamento compatível com a dinâmica informada.</p>
     </section>
 
     <footer>Fonte: contagem-evento(8).csv · Análise baseada nos horários informados pelos aparelhos e convertidos para Brasília.</footer>
