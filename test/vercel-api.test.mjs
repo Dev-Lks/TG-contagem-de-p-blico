@@ -46,10 +46,12 @@ test('funções da Vercel gravam e leem pelo REST do Supabase', async () => {
       id: 'acao_api_123', kind: 'count', deviceId: 'device_123', operator: 'Silva',
       gate: 'Principal', flow: 'in', amount: 1, createdAt: '2026-08-08T12:00:00.000Z'
     };
+    const batch = { ...action, id: 'acao_api_lote', amount: 5 };
     const postRes = mockResponse();
-    await actionsHandler({ method: 'POST', body: { actions: [action] }, url: '/api/actions' }, postRes);
-    assert.equal(postRes.result().status, 200);
+    await actionsHandler({ method: 'POST', body: { actions: [action, batch] }, url: '/api/actions' }, postRes);
+    assert.equal(postRes.result().status, 207);
     assert.deepEqual(postRes.result().body.accepted, [action.id]);
+    assert.deepEqual(postRes.result().body.rejected, [{ id: batch.id, error: 'A contagem aceita apenas uma pessoa por marcação' }]);
     assert.equal(inserted[0].event_id, `evento-teste-${saoPauloDate()}`);
     assert.equal(receivedAuthorization, null, 'a chave sb_secret não deve ir no header Bearer');
 

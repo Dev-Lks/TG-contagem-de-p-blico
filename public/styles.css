@@ -66,7 +66,7 @@ button, .secondary { cursor: pointer; border-radius: 11px; min-height: 48px; bor
 .count-button:active { transform: translateY(4px); box-shadow: 0 5px 14px #174b3735, inset 0 -3px 0 #103f2d; }
 .count-button span { font-size: clamp(64px, 22vw, 96px); font-weight: 950; line-height: .9; }
 .count-button small { margin-top: 10px; letter-spacing: .18em; font-weight: 900; }
-.quick-actions { display: grid; grid-template-columns: 1fr 1fr 1.35fr; gap: 8px; }
+.quick-actions { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .quick-actions button { background: white; border: 1px solid var(--green); color: var(--green); }
 .quick-actions .undo { color: var(--danger); border-color: #dba49f; }
 button:disabled { opacity: .4; cursor: not-allowed; }

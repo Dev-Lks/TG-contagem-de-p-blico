@@ -55,9 +55,11 @@ export function validateAction(input, config) {
   if (input.kind === 'count' || input.kind === 'undo') {
     if (!config.gates.includes(input.gate)) return 'Portão inválido';
     if (!['in', 'out'].includes(input.flow)) return 'Fluxo inválido';
-    if (!Number.isInteger(input.amount) || input.amount === 0 || Math.abs(input.amount) > 10) return 'Quantidade inválida';
-    if (input.kind === 'count' && input.amount < 1) return 'Contagem inválida';
-    if (input.kind === 'undo' && input.amount > -1) return 'Desfazer inválido';
+    if (input.kind === 'count' && input.amount !== 1) return 'A contagem aceita apenas uma pessoa por marcação';
+    if (input.kind === 'undo') {
+      if (input.amount !== -1) return 'O desfazer aceita apenas uma pessoa por marcação';
+      if (!/^[a-zA-Z0-9_-]{8,100}$/.test(String(input.refId || ''))) return 'Referência de desfazer inválida';
+    }
   }
   if (input.kind === 'estimate' && (!Number.isFinite(input.estimate) || input.estimate < 0 || input.estimate > 100000)) return 'Estimativa inválida';
   return null;

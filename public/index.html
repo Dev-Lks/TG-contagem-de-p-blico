@@ -7,7 +7,7 @@
   <meta name="description" content="Contagem confiável de entradas e saídas por portão.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=13">
+  <link rel="stylesheet" href="/styles.css?v=15">
   <title>Contador de Público</title>
 </head>
 <body>
@@ -61,8 +61,6 @@
           <button id="add-one-out" class="count-button out" aria-label="Registrar uma saída"><span>+1</span><small>SAÍDA</small></button>
         </div>
         <div class="quick-actions">
-          <button data-add="5" data-flow="in">+5 entrada</button>
-          <button data-add="5" data-flow="out">+5 saída</button>
           <button id="undo" class="undo" disabled>↶ Desfazer</button>
         </div>
         <p id="last-action" class="last-action">Nenhuma marcação nesta sessão.</p>
@@ -144,7 +142,7 @@
         <h2>Como contar</h2>
         <ol>
           <li>Escolha seu nome e o portão em que vai ficar.</li>
-          <li>Use <b>+1 ENTRADA</b> ou <b>+1 SAÍDA</b> conforme o movimento. Use +5 somente quando tiver certeza do grupo.</li>
+          <li>Use <b>+1 ENTRADA</b> ou <b>+1 SAÍDA</b> para cada pessoa, conforme o movimento.</li>
           <li>Se marcar errado, toque imediatamente em <b>Desfazer</b>.</li>
           <li>Não mude de portão no meio do turno. Use “Trocar posto” quando houver rendição.</li>
           <li>Se a internet cair, continue contando: os registros ficam no celular e sincronizam depois.</li>
@@ -155,6 +153,6 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="/app.js?v=14"></script>
+  <script type="module" src="/app.js?v=15"></script>
 </body>
 </html>

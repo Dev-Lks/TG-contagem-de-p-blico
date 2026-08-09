@@ -403,9 +403,9 @@ function toast(message) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-function addCount(amount, flow) {
+function addCount(flow) {
   if (!state.profile?.active) return;
-  queue({ ...actionBase('count', flow), amount });
+  queue({ ...actionBase('count', flow), amount: 1 });
   if (navigator.vibrate) navigator.vibrate(25);
 }
 
@@ -420,9 +420,8 @@ $('#start-session').addEventListener('click', () => {
   queue(start);
 });
 
-$('#add-one-in').addEventListener('click', () => addCount(1, 'in'));
-$('#add-one-out').addEventListener('click', () => addCount(1, 'out'));
-$$('[data-add]').forEach((button) => button.addEventListener('click', () => addCount(Number(button.dataset.add), button.dataset.flow)));
+$('#add-one-in').addEventListener('click', () => addCount('in'));
+$('#add-one-out').addEventListener('click', () => addCount('out'));
 $('#undo').addEventListener('click', () => {
   const candidate = undoCandidate();
   if (!candidate) return;

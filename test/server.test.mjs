@@ -35,17 +35,20 @@ test('salva, deduplica e recarrega ações', async () => {
   } finally { await app.close(); }
 });
 
-test('aceita desfazer auditável e rejeita portão inválido', async () => {
+test('aceita desfazer unitário e rejeita lote ou portão inválido', async () => {
   const app = await runningApp();
   try {
-    const count = valid({ amount: 5 });
-    const undo = valid({ kind: 'undo', amount: -5, refId: count.id });
+    const count = valid({ amount: 1 });
+    const undo = valid({ kind: 'undo', amount: -1, refId: count.id });
+    const batch = valid({ amount: 5 });
     const invalid = valid({ gate: 'Inexistente' });
-    const response = await fetch(`${app.base}/api/actions`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ actions: [count, undo, invalid] }) });
+    const response = await fetch(`${app.base}/api/actions`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ actions: [count, undo, batch, invalid] }) });
     assert.equal(response.status, 207);
     const result = await response.json();
     assert.equal(result.accepted.length, 2);
-    assert.equal(result.rejected[0].error, 'Portão inválido');
+    assert.equal(result.rejected.length, 2);
+    assert.equal(result.rejected[0].error, 'A contagem aceita apenas uma pessoa por marcação');
+    assert.equal(result.rejected[1].error, 'Portão inválido');
   } finally { await app.close(); }
 });
 
@@ -54,7 +57,9 @@ test('serve o aplicativo e exporta CSV', async () => {
   try {
     const page = await fetch(app.base);
     assert.equal(page.status, 200);
-    assert.match(await page.text(), /Contador de Público/);
+    const pageHtml = await page.text();
+    assert.match(pageHtml, /Contador de Público/);
+    assert.doesNotMatch(pageHtml, /\+5 entrada|\+5 saída/);
     const csv = await fetch(`${app.base}/api/export.csv`);
     assert.match(csv.headers.get('content-type'), /text\/csv/);
     assert.match(await csv.text(), /operador,portao/);

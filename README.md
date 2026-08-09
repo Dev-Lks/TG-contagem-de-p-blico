@@ -48,7 +48,7 @@ Invoke-RestMethod -Method Post -Uri 'https://apoiotgfiemg.vercel.app/api/admin' 
 > 1. Abra o link no celular
 > 2. Escolha seu nome e o portão em que vai ficar
 > 3. Use +1 ENTRADA ou +1 SAÍDA conforme o movimento
-> 4. Use +5 só quando tiver certeza do grupo
+> 4. Registre cada pessoa individualmente com +1
 > 5. Se marcar errado, toque em Desfazer imediatamente
 > 6. Se a internet cair, continue contando normalmente — os registros sincronizam sozinhos quando voltar
 > 7. Ao trocar de posto, use "Trocar posto"

@@ -16,7 +16,7 @@ Link do app: **COLE O LINK AQUI**
 
 - Toque em **+1 ENTRADA** para cada pessoa que entrar.
 - Toque em **+1 SAÍDA** para cada pessoa que sair.
-- Use **+5 entrada** ou **+5 saída** só quando tiver certeza de que é um grupo.
+- Registre cada pessoa individualmente pelo botão **+1** correspondente.
 - Errou a última marcação? Toque em **Desfazer** imediatamente.
 - Se a internet cair, continue contando. O celular guarda os registros e envia quando voltar.
 
@@ -36,7 +36,7 @@ Na aba **Painel**, o responsável consegue ver:
 
 ## Para passar aos atiradores
 
-> Pessoal, cada um abre o link, seleciona o próprio nome e o portão onde vai ficar. Para contar, usem **+1 ENTRADA** para quem entra e **+1 SAÍDA** para quem sai. Se tiver grupo, podem usar +5 com cuidado. Se errar, desfaçam na hora. Não contem a mesma fila em dois celulares. Qualquer problema, avisem o monitor responsável.
+> Pessoal, cada um abre o link, seleciona o próprio nome e o portão onde vai ficar. Para contar, usem **+1 ENTRADA** para cada pessoa que entrar e **+1 SAÍDA** para cada pessoa que sair. Se errar, desfaçam na hora. Não contem a mesma fila em dois celulares. Qualquer problema, avisem o monitor responsável.
 
 ## Administração
 
